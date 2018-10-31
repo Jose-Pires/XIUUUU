@@ -12,12 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="INIManager.cs" />
-    <Compile Remove="EntityClass.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 </Project>

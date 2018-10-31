@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using static TrustAgent.StandardPrints;
 
 namespace TrustAgent
 {
@@ -30,25 +30,25 @@ namespace TrustAgent
                 {
                     if (Helpers.ValidHex(hexKey)) {
                         if (Helpers.StringToByteArray(hexKey).Length != 32) {
-                            Program.ProcessLog(Program.ProcessPrint.error, "Invalid key!");
+                            ProcessLog(ProcessPrint.Error, "Invalid key!");
                             Console.WriteLine("");
                             return false;
                         }
                     } else {
-                        Program.ProcessLog(Program.ProcessPrint.error, "Invalid key!");
+                        ProcessLog(ProcessPrint.Error, "Invalid key!");
                         Console.WriteLine("");
                         return false;
                     }
                     if (pendingActions.Any(m => m.Item1 == Action.add && m.Item2 == entity && m.Item3 == hexKey)) {
-                        Program.ProcessLog(Program.ProcessPrint.warn, "There is a duplicate of this action pending!");
-                        Program.ProcessLog(Program.ProcessPrint.warn, "This action was ignored");
+                        ProcessLog(ProcessPrint.Warn, "There is a duplicate of this action pending!");
+                        ProcessLog(ProcessPrint.Warn, "This action was ignored");
                         Console.WriteLine("");
                         return false;
                     }
                     if (pendingActions.Any(m => m.Item1 == Action.add && m.Item2 == entity))
                     {
-                        Program.ProcessLog(Program.ProcessPrint.warn, "There is an action pending with different key!");
-                        Program.ProcessLog(Program.ProcessPrint.question, "Do you want to replace the previous action (y/n)");
+                        ProcessLog(ProcessPrint.Warn, "There is an action pending with different key!");
+                        ProcessLog(ProcessPrint.Question, "Do you want to replace the previous action (y/n)");
                         string a = Console.ReadLine();
                         if (a == "y")
                         {
@@ -56,7 +56,7 @@ namespace TrustAgent
                             pendingActions.Add(operation);
                             return true;
                         }
-                        Program.ProcessLog(Program.ProcessPrint.warn, "This action was ignored");
+                        ProcessLog(ProcessPrint.Warn, "This action was ignored");
                         Console.WriteLine("");
                         return false;
                     }
@@ -65,8 +65,8 @@ namespace TrustAgent
                 }
                 if (action == Action.del) {
                     if (pendingActions.Any(m => m.Item1 == Action.del && m.Item2 == entity)) {
-                        Program.ProcessLog(Program.ProcessPrint.warn, "There is a duplicate of this action pending!");
-                        Program.ProcessLog(Program.ProcessPrint.warn, "This action was ignored");
+                        ProcessLog(ProcessPrint.Warn, "There is a duplicate of this action pending!");
+                        ProcessLog(ProcessPrint.Warn, "This action was ignored");
                         Console.WriteLine("");
                         return false;
                     }
@@ -96,17 +96,17 @@ namespace TrustAgent
             /// Saves the pending changes (import, del and add)
             /// </summary>
             public static void Save() {
-                int warn = 0, err = 0;
+                int Warn = 0, err = 0;
                 foreach ((Action, string, string) change in pendingActions) {
                     if (change.Item1 == Action.add) {
                         TADatabase.AddEntityError tryAdd = Program.db.AddEntity(change.Item2, change.Item3);
                         switch (tryAdd) {
                             case TADatabase.AddEntityError.exists:
-                                Program.ProcessLog(Program.ProcessPrint.warn, "The entity " + change.Item2 + " is already on the database!");
-                                warn += 1;
+                                ProcessLog(ProcessPrint.Warn, "The entity " + change.Item2 + " is already on the database!");
+                                Warn += 1;
                                 break;
                             case TADatabase.AddEntityError.invalidKey:
-                                Program.ProcessLog(Program.ProcessPrint.error, "The key for the entity " + change.Item2 + " is invalid!");
+                                ProcessLog(ProcessPrint.Error, "The key for the entity " + change.Item2 + " is invalid!");
                                 err += 1;
                                 break;
                         }
@@ -115,16 +115,16 @@ namespace TrustAgent
                         TADatabase.DelEntityError tryDel = Program.db.DelEntity(change.Item2);
                         switch (tryDel) {
                             case TADatabase.DelEntityError.notFound:
-                                Program.ProcessLog(Program.ProcessPrint.error, "The user " + change.Item2 + " was not found on the database!");
+                                ProcessLog(ProcessPrint.Error, "The user " + change.Item2 + " was not found on the database!");
                                 err += 1;
                                 break;
                         }
                     }
                 }
                 pendingActions = new List<(Action, string, string)>();
-                Program.ProcessLog(Program.ProcessPrint.info, "All changes saved");
-                if (warn != 0 || err != 0)
-                    Program.ProcessLog(Program.ProcessPrint.warn, "There were " + warn + " warnings and " + err + " errors");
+                ProcessLog(ProcessPrint.Info, "All changes saved");
+                if (Warn != 0 || err != 0)
+                    ProcessLog(ProcessPrint.Warn, "There were " + Warn + " Warnings and " + err + " Errors");
                 Console.WriteLine("");
             }
 
@@ -140,7 +140,7 @@ namespace TrustAgent
             /// </summary>
             public static void PrintChanges() {
                 Console.WriteLine();
-                Program.ProcessLog(Program.ProcessPrint.info, pendingActions.Count.ToString() + " changes pending");
+                ProcessLog(ProcessPrint.Info, pendingActions.Count.ToString() + " changes pending");
                 Console.WriteLine("");
                 if (pendingActions.Count > 0) {
                     List<(string, string, string)> cmds = new List<(string, string, string)>();

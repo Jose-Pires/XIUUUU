@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace TrustAgent
 {
@@ -44,10 +45,12 @@ namespace TrustAgent
                     counter += 1;
                     clientSocket = serverSocket.AcceptTcpClient();
 
-                    byte[] bytesFrom = new byte[clientSocket.ReceiveBufferSize];
+                    byte[] dataLength = new byte[4];
 
                     NetworkStream networkStream = clientSocket.GetStream();
-                    networkStream.Read(bytesFrom, 0, clientSocket.ReceiveBufferSize);
+                    networkStream.Read(dataLength, 0, 4);
+                    byte[] bytesFrom = new byte[BitConverter.ToInt32(dataLength)];
+                    networkStream.Read(bytesFrom, 0, BitConverter.ToInt32(dataLength));
 
                     ClientConnected(bytesFrom, clientSocket, e);
                 }
@@ -62,14 +65,24 @@ namespace TrustAgent
                 ((HandleClient)item.Value).Disconnect();*/
         }
 
-        public void AcceptClient(string identifier, TcpClient clientSocket)
+        public void AcceptClient(string identifier, TcpClient clientSocket, bool enableSpy = false, string spyIp = "", int spyPort = 223344)
         {
             clientsList.Add(identifier, clientSocket);
             new Thread(delegate ()
             {
                 NetworkStream broadcastStream = clientSocket.GetStream();
-                byte[] connectedString = Encoding.ASCII.GetBytes("connected");
-                broadcastStream.Write(connectedString, 0, connectedString.Length);
+                string msg = JsonConvert.SerializeObject(new ServerCommand { Command = "connected", EnableSpy = enableSpy, SpyIP = spyIp, SpyPort = spyPort });
+
+                byte[] key = Program.db.GetKey(identifier);
+                byte[] connectedString = Encoding.ASCII.GetBytes(msg);
+                byte[] hmac = TADatabase.Encode(connectedString, key);
+                byte[] size = BitConverter.GetBytes(hmac.Length + connectedString.Length);
+                byte[] packet = new byte[hmac.Length + connectedString.Length + 4];
+                Array.Copy(size, 0, packet, 0, 4);
+                Array.Copy(hmac, 0, packet, 4, hmac.Length);
+                Array.Copy(connectedString, 0, packet, hmac.Length + 4, connectedString.Length);
+
+                broadcastStream.Write(packet, 0, packet.Length);
                 broadcastStream.Flush();
             }).Start();
 

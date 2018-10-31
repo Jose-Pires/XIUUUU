@@ -4,7 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Linq;
-using SharedModels;
+using static TrustAgent.StandardPrints;
 
 namespace TrustAgent
 {
@@ -142,20 +142,29 @@ namespace TrustAgent
 
         public void WriteToFile()
         {
-            byte[] decrypted = DecryptData(entities, GenKey(), GenIV());
-            if (selector + 1 > 50)
-                selector = 0;
-            selector++;
-            entities = EncryptData(decrypted, GenKey(), GenIV());
-            decrypted = null;
-            byte[] selectorBytes = BitConverter.GetBytes(selector);
-            byte[] toWrite = new byte[selectorBytes.Length + entities.Length];
-            Array.Copy(selectorBytes, toWrite, selectorBytes.Length);
-            Array.Copy(entities, 0, toWrite, selectorBytes.Length, entities.Length);
-            using (FileStream fs = new FileStream(dbPath, FileMode.OpenOrCreate, FileAccess.Write)) {
-                fs.Write(toWrite, 0, toWrite.Length);
-                fs.Close();
+
+            if (entities != null)
+            {
+                bool dbValidation = ValidateDecryption();
+                if (dbValidation)
+                {
+                    byte[] decrypted = DecryptData(entities, GenKey(), GenIV());
+                    if (selector + 1 > 50)
+                        selector = 0;
+                    selector++;
+                    entities = EncryptData(decrypted, GenKey(), GenIV());
+                    byte[] selectorBytes = BitConverter.GetBytes(selector);
+                    byte[] toWrite = new byte[selectorBytes.Length + entities.Length];
+                    Array.Copy(selectorBytes, toWrite, selectorBytes.Length);
+                    Array.Copy(entities, 0, toWrite, selectorBytes.Length, entities.Length);
+                    using (FileStream fs = new FileStream(dbPath, FileMode.OpenOrCreate, FileAccess.Write))
+                    {
+                        fs.Write(toWrite, 0, toWrite.Length);
+                        fs.Close();
+                    }
+                }
             }
+
         }
 
         #endregion
@@ -170,26 +179,13 @@ namespace TrustAgent
         {
             List<byte[]> ivs = new List<byte[]>();
             Random rnd = new Random(seed2);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 50; i++)
             {
                 byte[] iv = new byte[16]; //IV 128bits
                 rnd.NextBytes(iv);
                 ivs.Add(iv);
             }
             return ivs[selector];
-        }
-
-        /// <summary>
-        /// Generates an IV for the client, this is based on the timestamp on the received packet
-        /// </summary>
-        /// <returns>The IV.</returns>
-        /// <param name="entity">The entity.</param>
-        byte[] GenClientIV(EntityClass entity)
-        {
-            byte[] iv = new byte[16]; //IV 128bits
-            Random rnd = new Random(Convert.ToInt32(entity.TimeStamp));
-            rnd.NextBytes(iv);
-            return iv;
         }
 
         /// <summary>
@@ -200,13 +196,25 @@ namespace TrustAgent
         {
             List<byte[]> keys = new List<byte[]>();
             Random rnd = new Random(seed1);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 50; i++)
             {
                 byte[] key = new byte[32]; //KEY 256bits
                 rnd.NextBytes(key);
                 keys.Add(key);
             }
             return keys[selector];
+        }
+
+        #endregion
+
+        #region "HMAC Ops"
+
+        public static byte[] Encode(byte[] input, byte[] key)
+        {
+            using (var hMACSHA256 = new HMACSHA256(key))
+            {
+                return hMACSHA256.ComputeHash(input);
+            }
         }
 
         #endregion
@@ -234,7 +242,7 @@ namespace TrustAgent
                     _entities = Helpers.FromByteArray<List<EntityClass>>(decripted);
                     decripted = null;
 
-                    if (_entities.Any(m => m.IdentityName == entity))
+                    if (_entities.Any(m => m.EntityName == entity))
                     {
                         _entities = null;
                         iv = null;
@@ -252,7 +260,7 @@ namespace TrustAgent
 
             byte[] sharedKeyBytes = Helpers.StringToByteArray(sharedKey);
 
-            _entities.Add(new EntityClass { IdentityName = entity, PreSharedKey = sharedKeyBytes });
+            _entities.Add(new EntityClass { EntityName = entity, Key = sharedKeyBytes });
 
             decripted = Helpers.ToByteArray(_entities);
 
@@ -285,9 +293,9 @@ namespace TrustAgent
                 _entities = Helpers.FromByteArray<List<EntityClass>>(decripted);
                 decripted = null;
 
-                if (_entities.Any(m => m.IdentityName == entity))
+                if (_entities.Any(m => m.EntityName == entity))
                 {
-                    _entities.Remove(_entities.First(m => m.IdentityName == entity));
+                    _entities.Remove(_entities.First(m => m.EntityName == entity));
                     decripted = Helpers.ToByteArray(_entities);
                     entities = EncryptData(decripted, key, iv);
                     decripted = null;
@@ -305,37 +313,28 @@ namespace TrustAgent
         }
 
         /// <summary>
-        /// Validates the entity trying to connect
+        /// Received network packet (contains entity name, message, 
         /// </summary>
-        /// <returns>If the entity is valid with the possibilities of notFound, invalidKey, noError.</returns>
-        /// <param name="entity">Entity.</param>
-        public ValidationError ValidateEntity(EntityClass entity) {
+        /// <returns>The entity.</returns>
+        /// <param name="packet">Packet.</param>
+        public ValidationError ValidateEntity(NetworkPacket packet, byte[] hmac, byte[] raw) {
             if (entities == null)
                 return ValidationError.notFound;
-
-            byte[] iv = GenClientIV(entity);
-            byte[] decripted = DecryptData(entities, GenKey(), GenIV());
 
             bool dbValidation = ValidateDecryption();
 
             if (!dbValidation)
                 return ValidationError.notFound;
 
+            byte[] decripted = DecryptData(entities, GenKey(), GenIV());
+
             List<EntityClass> _entities = Helpers.FromByteArray<List<EntityClass>>(decripted);
             decripted = null;
-            if (_entities.Any(m => m.IdentityName == entity.IdentityName)) {
-                EntityClass storedEntity = _entities.First(m => m.IdentityName == entity.IdentityName);
-                byte[] decriptedEntityName = DecryptData(entity.Validation, storedEntity.PreSharedKey, iv);
-                string validation = Encoding.ASCII.GetString(decriptedEntityName);
-                iv = null;
-                storedEntity = null;
-                decriptedEntityName = null;
-                decripted = null;
-                _entities = null;
-                return entity.IdentityName == validation ? ValidationError.noError : ValidationError.invalidKey;
+            if (_entities.Any(m => m.EntityName == packet.Entity)) {
+                EntityClass storedEntity = _entities.First(m => m.EntityName == packet.Entity);
+                byte[] calcHMAC = Encode(raw, storedEntity.Key);
+                return (Helpers.ByteArrayToString(hmac) == Helpers.ByteArrayToString(calcHMAC)) ? ValidationError.noError : ValidationError.invalidKey;
             }
-
-            iv = null;
             _entities = null;
             return ValidationError.notFound;
         }
@@ -362,8 +361,8 @@ namespace TrustAgent
                     }
                     catch (Exception)
                     {
-                        Program.ProcessLog(Program.ProcessPrint.critical, "Unable to decrypt database. Possible errors: Bad seed1, Bad seed2, tempered file.");
-                        Program.ProcessLog(Program.ProcessPrint.critical, "All previous data was deleted!");
+                        ProcessLog(ProcessPrint.Critical, "Unable to decrypt database. Possible errors: Bad seed1, Bad seed2, tempered file.");
+                        ProcessLog(ProcessPrint.Critical, "All previous data was deleted!");
                         Console.WriteLine();
                         File.Delete(dbPath);
                         entities = null;
@@ -373,6 +372,24 @@ namespace TrustAgent
                 return false;
             }
             return false;
+        }
+
+        public byte[] GetKey(string entity) {
+            if (entities != null) {
+                byte[] iv = GenIV();
+                byte[] key = GenKey();
+                bool validation = ValidateDecryption();
+
+                if (!validation)
+                    return null;
+                byte[] decripted = DecryptData(entities, key, iv);
+                List<EntityClass> _entities = Helpers.FromByteArray<List<EntityClass>>(decripted);
+                decripted = null;
+                iv = null;
+                key = null;
+                return _entities.First(e => e.EntityName == entity).Key;
+            }
+            return null;
         }
 
         /// <summary>
@@ -388,7 +405,7 @@ namespace TrustAgent
 
                 if (!validation) {
                     Console.WriteLine("");
-                    Program.ProcessLog(Program.ProcessPrint.info, "There are no entities on the database");
+                    ProcessLog(ProcessPrint.Info, "There are no entities on the database");
                     Console.WriteLine("");
                     return;
                 }
@@ -403,7 +420,7 @@ namespace TrustAgent
                 List<(string, string)> cmds = new List<(string, string)>();
                 foreach (EntityClass entity in _entities)
                 {
-                    (string, string) prt = showKey ? (entity.IdentityName, Helpers.ByteArrayToString(entity.PreSharedKey)) : (entity.IdentityName, "** HIDDEN **");
+                    (string, string) prt = showKey ? (entity.EntityName, Helpers.ByteArrayToString(entity.Key)) : (entity.EntityName, "** HIDDEN **");
                     cmds.Add(prt);
                 }
                 decripted = null;
@@ -414,7 +431,7 @@ namespace TrustAgent
 
             } else {
                 Console.WriteLine("");
-                Program.ProcessLog(Program.ProcessPrint.info, "There are no entities on the database");
+                ProcessLog(ProcessPrint.Info, "There are no entities on the database");
                 Console.WriteLine("");
             }
         }

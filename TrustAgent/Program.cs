@@ -3,41 +3,31 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Threading;
 using System.Linq;
-using SharedModels;
+using System.Net.Sockets;
+using Newtonsoft.Json;
+using static TrustAgent.StandardPrints;
 using System.Text;
-using System.Security.Cryptography;
 
 namespace TrustAgent
 {
     class Program
     {
 
-        public enum ProcessPrint {
-            info,
-            warn,
-            debug,
-            error,
-            question,
-            input,
-            critical,
-            spy
-        }
-
         #region "Variables"
 
         static bool enableDebug;
-        static Thread thread;
         static string preCommand = "TrustAgent () > ";
         static string computerName;
         static int seed1 = 100000;
         static int seed2 = 100000;
         static int port = 12345;
-        public static TADatabase db;
         static string execPath;
-        static Server sv;
         static bool enableSpy;
+
+        public static TADatabase db;
+        public static Server sv;
+        public static MenuHandler mh;
 
         #endregion
 
@@ -49,19 +39,19 @@ namespace TrustAgent
         static void Main(string[] args)
         {
             Console.Clear();
-            ProcessLog(ProcessPrint.info, "TrustAgent is initializing...");
-            ProcessLog(ProcessPrint.info, "TrustAgent is using AES256");
+            ProcessLog(ProcessPrint.Info, "TrustAgent is initializing...");
+            ProcessLog(ProcessPrint.Info, "TrustAgent is using the cipher AES256");
+            ProcessLog(ProcessPrint.Info, "TrustAgent is using the hash SHA-256 for HMAC");
 
             if (args.Length > 0)
             {
-                if (Helpers.ArrayContains(args, "-spy"))
+                if (args.Contains("-spy"))
                 {
-                    ProcessLog(ProcessPrint.info, "Spy is enabled, any unencripted communications will be visible");
-                    enableSpy = true;
+                    //TODO: Create SPY Project and connect to it
                 }
-                if (Helpers.ArrayContains(args, "-debug"))
+                if (args.Contains("-debug"))
                 {
-                    ProcessLog(ProcessPrint.info, "Debug is enabled!");
+                    ProcessLog(ProcessPrint.Info, "Debug is enabled!");
                     enableDebug = true;
                 }
 
@@ -69,36 +59,36 @@ namespace TrustAgent
 
                 CheckSeed2(args);
 
-                if (Helpers.ArrayContains(args, "-port"))
+                if (args.Contains("-port"))
                 {
                     int pos = Array.IndexOf(args, "-port");
                     bool success = int.TryParse(args[pos + 1], out port);
                     if (!success)
                     {
-                        ProcessLog(ProcessPrint.warn, "Unable to fetch the port, generating one...");
+                        ProcessLog(ProcessPrint.Warn, "Unable to fetch the port, generating one...");
                     }
                 }
                 else
-                    ProcessLog(ProcessPrint.warn, "Port not detected, generating one...");
+                    ProcessLog(ProcessPrint.Warn, "Port not detected, generating one...");
             } else {
                 // The trust agent was started with no arguments
-                ProcessLog(ProcessPrint.warn, "seed1 argument not found!");
-                ProcessLog(ProcessPrint.question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
+                ProcessLog(ProcessPrint.Warn, "seed1 argument not found!");
+                ProcessLog(ProcessPrint.Question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
                 var a = Console.ReadLine();
                 if (a != "y")
                     RequestSeed(out seed1);
                 else
-                    seed1 = GenerateSeed();
+                    seed1 = Helpers.GenerateSeed();
 
-                ProcessLog(ProcessPrint.warn, "seed2 argument not found!");
-                ProcessLog(ProcessPrint.question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
+                ProcessLog(ProcessPrint.Warn, "seed2 argument not found!");
+                ProcessLog(ProcessPrint.Question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
                 a = Console.ReadLine();
                 if (a != "y")
                     RequestSeed(out seed2);
                 else
-                    seed2 = GenerateSeed();
+                    seed2 = Helpers.GenerateSeed();
 
-                ProcessLog(ProcessPrint.warn, "Port not detected, generating one...");
+                ProcessLog(ProcessPrint.Warn, "Port not detected, generating one...");
             }
             App();
         }
@@ -111,19 +101,19 @@ namespace TrustAgent
         /// </summary>
         /// <param name="args">Main args to check if parameter exists.</param>
         static void CheckSeed1(string[] args) {
-            if (Helpers.ArrayContains(args, "-seed1"))
+            if (args.Contains("-seed1"))
             {
                 int pos = Array.IndexOf(args, "-seed1");
                 bool success = int.TryParse(args[pos + 1], out seed1);
                 if (!success)
                 {
-                    ProcessLog(ProcessPrint.warn, "Unable to fech the seed, if data is stored it will not be possible to decrypt it!");
-                    ProcessLog(ProcessPrint.question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
-                    var a = Console.ReadLine();
-                    if (a != "y")
+                    ProcessLog(ProcessPrint.Warn, "Unable to fech the seed, if data is stored it will not be possible to decrypt it!");
+                    ProcessLog(ProcessPrint.Question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
+                    var a = Console.ReadLine().ToBool();
+                    if (!a)
                         RequestSeed(out seed1);
                     else
-                        seed1 = GenerateSeed();
+                        seed1 = Helpers.GenerateSeed();
                 } else {
                     if (seed1 < 100000 || seed1 > 999999)
                         RequestSeed(out seed1);
@@ -131,13 +121,13 @@ namespace TrustAgent
             }
             else
             {
-                ProcessLog(ProcessPrint.warn, "Argument seed1 not found!");
-                ProcessLog(ProcessPrint.question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
+                ProcessLog(ProcessPrint.Warn, "Argument seed1 not found!");
+                ProcessLog(ProcessPrint.Question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
                 var a = Console.ReadLine();
                 if (a != "y")
                     RequestSeed(out seed1);
                 else
-                    seed1 = GenerateSeed();
+                    seed1 = Helpers.GenerateSeed();
             }
         }
 
@@ -151,19 +141,19 @@ namespace TrustAgent
             // Request the seed1 that will generate the key to encrypt the data
             // It can be passed by argument using -seed1 [seed] 
             // If seed1 is not passed on the arguments it's possible to generate a new seed or enter a seed
-            if (Helpers.ArrayContains(args, "-seed2"))
+            if (args.Contains("-seed2"))
             {
                 int pos = Array.IndexOf(args, "-seed2");
                 bool success = int.TryParse(args[pos + 1], out seed2);
                 if (!success)
                 {
-                    ProcessLog(ProcessPrint.warn, "Unable to fech the seed, if data is stored it will not be possible to decrypt it!");
-                    ProcessLog(ProcessPrint.question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
+                    ProcessLog(ProcessPrint.Warn, "Unable to fech the seed, if data is stored it will not be possible to decrypt it!");
+                    ProcessLog(ProcessPrint.Question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
                     var a = Console.ReadLine();
                     if (a != "y")
                         RequestSeed(out seed2);
                     else
-                        seed2 = GenerateSeed();
+                        seed2 = Helpers.GenerateSeed();
                 } else {
                     if (seed1 < 100000 || seed1 > 999999)
                         RequestSeed(out seed1);
@@ -171,13 +161,13 @@ namespace TrustAgent
             }
             else
             {
-                ProcessLog(ProcessPrint.warn, "Argument seed2 not found!");
-                ProcessLog(ProcessPrint.question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
+                ProcessLog(ProcessPrint.Warn, "Argument seed2 not found!");
+                ProcessLog(ProcessPrint.Question, "Do you wish to generate a seed value, this will invalidate any previously stored data (y/n)");
                 var a = Console.ReadLine();
                 if (a != "y")
                     RequestSeed(out seed2);
                 else
-                    seed2 = GenerateSeed();
+                    seed2 = Helpers.GenerateSeed();
             }
         }
 
@@ -186,11 +176,11 @@ namespace TrustAgent
         /// </summary>
         /// <param name="seed">The entered seed.</param>
         static void RequestSeed(out int seed) {
-            ProcessLog(ProcessPrint.warn, "If the entered seed does not match the previous used seed the stored data will be overwritten!");
-            ProcessLog(ProcessPrint.input, "Please enter a value between 100000 and 999999");
+            ProcessLog(ProcessPrint.Warn, "If the entered seed does not match the previous used seed the stored data will be overwritten!");
+            ProcessLog(ProcessPrint.Input, "Please enter a value between 100000 and 999999");
             bool success = int.TryParse(Console.ReadLine(), out seed) && (seed >= 100000 && seed <= 999999);
             while (!success) {
-                ProcessLog(ProcessPrint.input, "Please enter a value between 100000 and 999999");
+                ProcessLog(ProcessPrint.Input, "Please enter a value between 100000 and 999999");
                 success = int.TryParse(Console.ReadLine(), out seed) && (seed >= 100000 && seed <= 999999);
             }
         }
@@ -198,7 +188,7 @@ namespace TrustAgent
         #endregion
 
         /// <summary>
-        /// Secondary TrustAgent server initialization, this loads information about
+        /// Secondary TrustAgent server initialization, this loads Information about
         /// the computer such as IP's and computer name.
         /// It also initializes the TrustAgent server listner and starts awaiting for commands
         /// </summary>
@@ -210,334 +200,149 @@ namespace TrustAgent
             execPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             if (enableDebug)
             {
-                ProcessLog(ProcessPrint.debug, "Executable path: " + execPath);
-                ProcessLog(ProcessPrint.debug, "Computer name: " + computerName);
-                ProcessLog(ProcessPrint.debug, "Fetching available IP's");
+                ProcessLog(ProcessPrint.Debug, "Executable path: " + execPath);
+                ProcessLog(ProcessPrint.Debug, "Computer name: " + computerName);
+                ProcessLog(ProcessPrint.Debug, "Fetching available IP's");
                 foreach (IPAddress ip in ips)
                 {
-                    ProcessLog(ProcessPrint.debug, ip.ToString());
+                    ProcessLog(ProcessPrint.Debug, ip.ToString());
                 }
             }
             if (ips.Count <= 0)
             {
-                ProcessLog(ProcessPrint.critical, "There are no available networks!");
+                ProcessLog(ProcessPrint.Critical, "There are no available networks!");
                 Environment.Exit(0);
             }
             Console.WriteLine("");
-            ProcessLog(ProcessPrint.info, "Type help at anytime to show the help menu\n");
+            ProcessLog(ProcessPrint.Info, "Type help at anytime to show the help menu\n");
             string dbPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+
             db = new TADatabase(seed1, seed2, dbPath + "/tadb.bin");
             sv = new Server(ips.First(), 12345);
+            mh = new MenuHandler();
+
             sv.ClientConnected += Sv_ClientConnected;
-            thread = new Thread(ReadCommands);
-            thread.Start();
+            mh.CommandReceived += Mh_CommandReceived;
+
         }
 
-        static void Sv_ClientConnected(byte[] m, System.Net.Sockets.TcpClient socket, EventArgs e)
+        static void Mh_CommandReceived(MenuHandler.Menu menu, object command, MenuEventArgs e)
         {
-            EntityClass entity = Helpers.FromByteArray<EntityClass>(m);
+            switch (menu) {
+                case MenuHandler.Menu.Keys:
+                    switch ((MenuHandler.KeysCommands)command) {
+                        case MenuHandler.KeysCommands.List:
+                            ListEntities(e);
+                            break;
+                        case MenuHandler.KeysCommands.Add:
+                            AddEntity(e);
+                            break;
+                        case MenuHandler.KeysCommands.Del:
+                            DelEntity(e);
+                            break;
+                        case MenuHandler.KeysCommands.ListChanges:
+                            ActionProcessor.Keys.PrintChanges();
+                            break;
+                    }
+                    break;
+                case MenuHandler.Menu.Server:
+                    switch ((MenuHandler.ServerCommands)command) {
+                        case MenuHandler.ServerCommands.List:
+                            ListConnectedEntities();
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        #region "MenuHandler Helpers"
+
+        static void ListEntities(MenuEventArgs e) {
+            bool showKey = (bool)e.Arguments.First(m => m.Key.Equals(MenuHandler.KeysArgs.ShowKey)).Value;
+            db.PrintEntities(showKey);
+        }
+
+        static void AddEntity(MenuEventArgs e) {
+            string entity = (string)e.Arguments.First(m => m.Key.Equals(MenuHandler.KeysArgs.Entity)).Value;
+            string key = (string)e.Arguments.First(m => m.Key.Equals(MenuHandler.KeysArgs.Key)).Value;
+            ActionProcessor.Keys.PerformAction(ActionProcessor.Keys.Action.add, entity, key);
+        }
+
+        static void DelEntity(MenuEventArgs e) {
+            string entity = (string)e.Arguments.First(m => m.Key.Equals(MenuHandler.KeysArgs.Entity)).Value;
+            ActionProcessor.Keys.PerformAction(ActionProcessor.Keys.Action.del, entity, "");
+        }
+
+        static void ListConnectedEntities() {
+            Console.WriteLine("");
+            List<(string, string)> cmds = new List<(string, string)>();
+            foreach (string key in sv.clientsList.Keys)
+            {
+                IPAddress ip = ((IPEndPoint)((TcpClient)sv.clientsList[key]).Client.RemoteEndPoint).Address;
+                cmds.Add((key, ip.ToString()));
+            }
+            Console.WriteLine(cmds.ToStringTable(
+                new[] { "Entity", "IP" },
+                a => a.Item1, a => a.Item2));
+        }
+
+        #endregion
+
+        static void Sv_ClientConnected(byte[] m, TcpClient socket, EventArgs e)
+        {
+            byte[] hmac = new byte[32];
+            Array.Copy(m, hmac, 32);
+            byte[] data = new byte[m.Length - 32];
+            Array.Copy(m, 32, data, 0, m.Length - 32);
+            string str = Encoding.ASCII.GetString(data);
+            NetworkPacket packet = JsonConvert.DeserializeObject<NetworkPacket>(str);
             if (enableDebug) {
                 Helpers.ReplaceWith("");
-                ProcessLog(ProcessPrint.debug, "New entity connected: " + entity.IdentityName);
+                ProcessLog(ProcessPrint.Debug, "New entity is trying to connect: " + packet.Entity);
             }
-            if (enableSpy) {
-                int i = 0;
-                for (i = m.Length -1; i >= 0; i--)
-                {
-                    if (m[i] != 0)
-                        break;
-                }
-                byte[] _m = new byte[i];
-                Array.Copy(m, _m, i);
-                Helpers.ReplaceWith("");
-                ProcessLog(ProcessPrint.spy, "This comunication was intercepted");
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                Console.OutputEncoding = Encoding.GetEncoding(1252);
-                Console.WriteLine(Hex.Dump(_m));
+            if (!enableSpy) {
+
+                //   TODO: Contact Spy
+                //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                //Console.OutputEncoding = Encoding.GetEncoding(1252);
+
+                //Helpers.ReplaceWith("");
+                /*ProcessLog(ProcessPrint.Info, "Full Data");
+                Console.WriteLine(Hex.Dump(m));
+                Console.WriteLine("");*/
+                /*ProcessLog(ProcessPrint.Info, "HMAC");
+                Console.WriteLine(Hex.Dump(hmac));
                 Console.WriteLine("");
+                ProcessLog(ProcessPrint.Info, "DATA");
+                Console.WriteLine(Hex.Dump(data));
+                Console.WriteLine("");*/
             }
 
-            TADatabase.ValidationError validation = db.ValidateEntity(entity);
+            TADatabase.ValidationError validation = db.ValidateEntity(packet, hmac, data);
             IPAddress ip = ((IPEndPoint)socket.Client.RemoteEndPoint).Address;
             if (validation == TADatabase.ValidationError.notFound)
-                ProcessLog(ProcessPrint.debug, string.Format("Connection from entity {0} ({1}) refused, the user was not found", entity.IdentityName, ip));
+                ProcessLog(ProcessPrint.Debug, string.Format("Connection from entity {0} ({1}) refused, the user was not found", packet.Entity, ip));
             if (validation == TADatabase.ValidationError.invalidKey)
-                ProcessLog(ProcessPrint.debug, string.Format("Connection from entity {0} ({1}) refused, the user has an invalid key", entity.IdentityName, ip));
+                ProcessLog(ProcessPrint.Debug, string.Format("Connection from entity {0} ({1}) refused, the user has an invalid key or tempered data", packet.Entity, ip));
             if (validation == TADatabase.ValidationError.noError) {
+                if (enableSpy) {
+                    //TODO: Contact spy
+                    /*ProcessLog(ProcessPrint.spy, "This comunication was intercepted");
+                    byte[] connectedString = Encoding.ASCII.GetBytes("connected");
+                    Console.OutputEncoding = Encoding.GetEncoding(1252);
+                    Console.WriteLine(Hex.Dump(connectedString));
+                    Console.WriteLine("");*/
+                }
                 if (enableDebug)
-                    ProcessLog(ProcessPrint.debug, string.Format("Connection from entity {0} ({1}) accepted", entity.IdentityName, ip));
-                sv.AcceptClient(entity.IdentityName, socket);
+                    ProcessLog(ProcessPrint.Debug, string.Format("Connection from entity {0} ({1}) accepted", packet.Entity, ip));
+                sv.AcceptClient(packet.Entity, socket);
             }
                 
-
             Console.WriteLine("");
-            Console.Write(preCommand);
+            Console.Write(mh.commandPrefix);
+
         }
-
-
-        #region "Command Handler"
-
-        /// <summary>
-        /// Command handler, interprets commands on the main menu
-        /// </summary>
-        static void ReadCommands()
-        {
-            string cmd = "";
-            while (cmd != "exit")
-            {
-                Console.Write("\r" + preCommand); cmd = Console.ReadLine();
-                if (cmd == "keys")
-                {
-                    bool res = ReadKeysCommands();
-                    cmd = (res) ? "exit" : "";
-                }
-                else if (cmd == "clear")
-                    Console.Clear();
-                else if (cmd == "help")
-                    PrintMainHelp();
-                else if (cmd == "exit") {
-                    sv.Shutdown();
-                    db.WriteToFile();
-                } else
-                    ProcessLog(ProcessPrint.error, "Command not found!");
-            }
-        }
-
-        /// <summary>
-        /// Command handler, interprets commands on the keys menu
-        /// </summary>
-        /// <returns><c>true</c>, if the user wants to terminate the server, <c>false</c> otherwise.</returns>
-        static bool ReadKeysCommands() {
-            string cmd = "";
-            preCommand = "TrustAgent (" + computerName + "): keys > ";
-            while (cmd != "back")
-            {
-                Console.Write("\r" + preCommand); cmd = Console.ReadLine();
-                if (cmd.Contains("list") && !cmd.Contains("changes"))
-                {
-                    bool k = false || cmd.Contains("-k");
-                    db.PrintEntities(k);
-                }
-                else if (cmd.Contains("add")) {
-                    cmd = cmd.Replace("add ", "").Trim();
-                    string[] cmdSplited = cmd.Split(' ');
-                    string _key = cmdSplited[cmdSplited.Length - 1];
-                    Array.Resize(ref cmdSplited, cmdSplited.Length - 1);
-                    string entityName = string.Join(" ", cmdSplited);
-                    bool res = ActionProcessor.Keys.PerformAction(ActionProcessor.Keys.Action.add, entityName, _key);
-                    if (res)
-                    {
-                        ProcessLog(ProcessPrint.info, ActionProcessor.Keys.Pending + " changes pending");
-                        Console.WriteLine("");
-                    }
-                }
-                else if (cmd.Contains("import"))
-                {
-                    bool ow = false || cmd.Contains("-overwrite");
-                    cmd = cmd.Replace("import ", "").Replace(" -overwrite", "");
-                    bool actionResult = ActionProcessor.Keys.PerformAction(cmd);
-                    if (actionResult)
-                        ProcessLog(ProcessPrint.info, ActionProcessor.Keys.Pending + " changes pending");
-                    else
-                        ProcessLog(ProcessPrint.error, "File not found");
-                }
-                else if (cmd.Contains("del")) {
-                    cmd = cmd.Replace("del ", "").Trim();
-                    bool res = ActionProcessor.Keys.PerformAction(ActionProcessor.Keys.Action.del, cmd, "");
-                    if (res)
-                    {
-                        ProcessLog(ProcessPrint.info, ActionProcessor.Keys.Pending + " changes pending");
-                        Console.WriteLine("");
-                    }
-                }
-                else if (cmd == "save")
-                    ActionProcessor.Keys.Save();
-                else if (cmd == "discard")
-                    ActionProcessor.Keys.Discard();
-                else if (cmd == "list changes")
-                    ActionProcessor.Keys.PrintChanges();
-                else if (cmd == "clear")
-                    Console.Clear();
-                else if (cmd == "help")
-                    PrintKeyshelp();
-                else if (cmd == "back")
-                {
-                    if (ActionProcessor.Keys.Pending > 0) {
-                        ProcessLog(ProcessPrint.warn, "There are pending changes to apply!");
-                        ProcessLog(ProcessPrint.question, "Do you want to discard the changes (y/n)");
-                        string a = Console.ReadLine();
-                        if (a != "y")
-                            ActionProcessor.Keys.Save();
-                    } else
-                        preCommand = "TrustAgent (" + computerName + ") > ";
-                    return false;
-                }
-                else if (cmd == "exit")
-                    return true;
-                else
-                    ProcessLog(ProcessPrint.error, "Command not found!");
-            }
-            return false;
-        }
-
-        #endregion
-
-        #region "Help Prints"
-
-        /// <summary>
-        /// Prints the main menu help
-        /// </summary>
-        static void PrintMainHelp()
-        {
-            Console.WriteLine("");
-            IEnumerable<Tuple<string, string>> cmds =
-                new[]
-                {
-                  Tuple.Create("keys", "Enters the submenu to manage the keys"),
-                  Tuple.Create("system", "Enters the admin menue"),
-                  Tuple.Create("",""),
-                  Tuple.Create("clear", "Clears the output"),
-                  Tuple.Create("help", "Shows the help of the current selected menu"),
-                  Tuple.Create("exit", "Terminates the TrustAgent server")
-                };
-            Console.WriteLine(cmds.ToStringTable(
-                new[] { "Command", "Description" },
-                a => a.Item1, a => a.Item2));
-        }
-
-        /// <summary>
-        /// Prints the keys menu help
-        /// </summary>
-        static void PrintKeyshelp()
-        {
-            Console.WriteLine("");
-            IEnumerable<Tuple<string, string>> cmds =
-                new[]
-                {
-                  Tuple.Create("list [options]", "Lists the entities on the TrustAgent database"),
-                  Tuple.Create("add [username] [key]", "Adds a new client to the TrustAgent database"),
-                  Tuple.Create("del [username]", "Deletes an client from the TrustAgent database"),
-                  Tuple.Create("import [file path] [options]", "Imports data from a csv file"),
-                  Tuple.Create("",""),
-                  Tuple.Create("save", "Saves current changes without leaving the current menu"),
-                  Tuple.Create("discard", "Discards current changes without leaving the current menu"),
-                  Tuple.Create("list changes", "Lists all the changes"),
-                  Tuple.Create("",""),
-                  Tuple.Create("clear", "Clears the output"),
-                  Tuple.Create("help", "Shows the help of the current selected menu"),
-                  Tuple.Create("back", "Navigates to the previous menu"),
-                  Tuple.Create("exit", "Terminates the TrustAgent server")
-                };
-            Console.WriteLine(cmds.ToStringTable(
-                new[] { "Command", "Description" },
-                a => a.Item1, a => a.Item2 ));
-            Console.WriteLine("list options");
-            cmds =
-                new[]
-                {
-                  Tuple.Create("-k", "lists entities and keys")
-                };
-            Console.WriteLine(cmds.ToStringTable(
-                new[] { "Option", "Description" },
-                a => a.Item1, a => a.Item2));
-
-            Console.WriteLine("import options");
-            cmds =
-                new[]
-                {
-                  Tuple.Create("-overwrite", "overwrites the entire existing database")
-                };
-            Console.WriteLine(cmds.ToStringTable(
-                new[] { "Option", "Description" },
-                a => a.Item1, a => a.Item2));
-        }
-
-        #endregion
-
-        #region "Helpers"
-
-        /// <summary>
-        /// Helps processing logs shown on the console by formatting the spaces,
-        /// change the text colors of the INFO, WARN, DEBUG, INPUT, QUESTION, CRYTICAL
-        /// and ERROR tags
-        /// </summary>
-        /// <param name="type">Type.</param>
-        /// <param name="message">Message.</param>
-        public static void ProcessLog(ProcessPrint type, string message)
-        {
-            var initColor = Console.ForegroundColor;
-            switch (type)
-            {
-                case ProcessPrint.info:
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.Write("INFO");
-                    Console.ForegroundColor = initColor;
-                    Console.WriteLine("]     - " + message);
-                    break;
-                case ProcessPrint.warn:
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("WARN");
-                    Console.ForegroundColor = initColor;
-                    Console.WriteLine("]     - " + message);
-                    break;
-                case ProcessPrint.debug:
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.Write("DEBUG");
-                    Console.ForegroundColor = initColor;
-                    Console.WriteLine("]    - " + message);
-                    break;
-                case ProcessPrint.input:
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    Console.Write("INPUT");
-                    Console.ForegroundColor = initColor;
-                    Console.Write("]    - " + message + ": ");
-                    break;
-                case ProcessPrint.question:
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    Console.Write("QUESTION");
-                    Console.ForegroundColor = initColor;
-                    Console.Write("] - " + message + ": ");
-                    break;
-                case ProcessPrint.critical:
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.Write("CRITICAL");
-                    Console.ForegroundColor = initColor;
-                    Console.WriteLine("] - " + message);
-                    break;
-                case ProcessPrint.error:
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("ERROR");
-                    Console.ForegroundColor = initColor;
-                    Console.WriteLine("]    - " + message);
-                    break;
-                case ProcessPrint.spy:
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                    Console.Write("SPY");
-                    Console.ForegroundColor = initColor;
-                    Console.WriteLine("]      - " + message);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Generates a pseudo random number between 100000 and 999999
-        /// </summary>
-        /// <returns>The seed.</returns>
-        static int GenerateSeed()
-        {
-            var rnd = new Random();
-            return rnd.Next(100000, 999999);
-        }
-
-        #endregion
 
     }
 }

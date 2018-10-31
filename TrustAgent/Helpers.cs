@@ -7,7 +7,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace TrustAgent
-{
+{ 
+
     public static class Helpers
     {
 
@@ -84,11 +85,12 @@ namespace TrustAgent
 
         /// <summary>
         /// Checks if the array contains an object
+        /// This is an extension of the class Array
         /// </summary>
         /// <returns><c>true</c>, if array containsthe object, <c>false</c> otherwise.</returns>
         /// <param name="arr">Array on witch to search.</param>
         /// <param name="obj">Object to search.</param>
-        public static bool ArrayContains(object[] arr, object obj)
+        public static bool Contains(this Array arr, object obj)
         {
             foreach (object _obj in arr)
             {
@@ -137,9 +139,37 @@ namespace TrustAgent
                 Console.Write("\r" + c);
         }
 
+        /// <summary>
+        /// Generates a random number
+        /// </summary>
+        /// <returns>The number.</returns>
+        /// <param name="min">Minimum value.</param>
+        /// <param name="max">Maximum value.</param>
+        public static int GenerateSeed(int min = 100000, int max = 999999)
+        {
+            var rnd = new Random();
+            return rnd.Next(min, max);
+        }
+
+        /// <summary>
+        /// Generates a time stamp with the format HHmmss
+        /// </summary>
+        /// <returns>The timestamp.</returns>
+        /// <param name="value">Value.</param>
         public static String GetTimestamp(DateTime value)
         {
             return value.ToString("HHmmss");
         }
+
+        /// <summary>
+        /// Converts the input of Y or y to boolean this is an extension of string
+        /// </summary>
+        /// <returns><c>true</c>, if y or Y was entered, <c>false</c> otherwise.</returns>
+        /// <param name="input">Input.</param>
+        public static bool ToBool(this String input)
+        {
+            return input == "y" || input == "Y";
+        }
+
     }
 }
