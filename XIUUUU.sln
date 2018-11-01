@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIUUUU", "XIUUUU\XIUUUU.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrustAgent", "TrustAgent\TrustAgent.csproj", "{9E4E9C93-5A34-4F54-93C1-9F677BC33DCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spy", "Spy\Spy.csproj", "{62976721-35E2-4B99-B2E2-913E0D76C190}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -19,5 +21,9 @@ Global
 		{9E4E9C93-5A34-4F54-93C1-9F677BC33DCB}.Debug|x86.Build.0 = Debug|Any CPU
 		{9E4E9C93-5A34-4F54-93C1-9F677BC33DCB}.Release|x86.ActiveCfg = Release|Any CPU
 		{9E4E9C93-5A34-4F54-93C1-9F677BC33DCB}.Release|x86.Build.0 = Release|Any CPU
+		{62976721-35E2-4B99-B2E2-913E0D76C190}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{62976721-35E2-4B99-B2E2-913E0D76C190}.Debug|x86.Build.0 = Debug|Any CPU
+		{62976721-35E2-4B99-B2E2-913E0D76C190}.Release|x86.ActiveCfg = Release|Any CPU
+		{62976721-35E2-4B99-B2E2-913E0D76C190}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

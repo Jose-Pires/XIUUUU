@@ -47,7 +47,8 @@ namespace TrustAgent
         public enum ValidationError {
             notFound,
             invalidKey,
-            noError
+            noError,
+            alreadyConnected
         }
 
         #endregion
@@ -325,6 +326,9 @@ namespace TrustAgent
 
             if (!dbValidation)
                 return ValidationError.notFound;
+
+            if (Program.sv.clientsList.Contains(packet.Entity))
+                return ValidationError.alreadyConnected;
 
             byte[] decripted = DecryptData(entities, GenKey(), GenIV());
 

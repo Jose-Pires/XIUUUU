@@ -2,20 +2,17 @@
 using System.Collections;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using Newtonsoft.Json;
 
-namespace TrustAgent
+namespace Spy
 {
-
     public class Server
     {
         Thread thread;
         bool stop;
-
+        int i = 0;
         public event ClientHandler ClientConnected;
-        public delegate void ClientHandler(byte[] m, TcpClient socket, EventArgs e);
+        public delegate void ClientHandler(byte[] packet, byte[] m, TcpClient socket, EventArgs e);
 
         public EventArgs e;
 
@@ -52,7 +49,12 @@ namespace TrustAgent
                     byte[] bytesFrom = new byte[BitConverter.ToInt32(dataLength)];
                     networkStream.Read(bytesFrom, 0, BitConverter.ToInt32(dataLength));
 
-                    ClientConnected(bytesFrom, clientSocket, e);
+                    byte[] packet = new byte[4 + bytesFrom.Length];
+                    Array.Copy(dataLength, packet, 4);
+                    Array.Copy(bytesFrom, 0, packet, 4, bytesFrom.Length);
+                    ClientConnected(packet, bytesFrom, clientSocket, e);
+                    AcceptClient(i.ToString(), clientSocket);
+                    i++;
                 }
             }
 
@@ -65,28 +67,9 @@ namespace TrustAgent
                 ((HandleClient)item.Value).Disconnect();*/
         }
 
-        public void AcceptClient(string identifier, TcpClient clientSocket, bool enableSpy = false, string spyIp = "", int spyPort = 223344)
+        public void AcceptClient(string identifier, TcpClient clientSocket)
         {
             clientsList.Add(identifier, clientSocket);
-            new Thread(delegate ()
-            {
-                NetworkStream broadcastStream = clientSocket.GetStream();
-                string msg = JsonConvert.SerializeObject(new ServerCommand { Command = "connected", EnableSpy = enableSpy, SpyIP = spyIp, SpyPort = spyPort });
-
-                byte[] key = Program.db.GetKey(identifier);
-                byte[] connectedString = Encoding.ASCII.GetBytes(msg);
-                byte[] hmac = TADatabase.Encode(connectedString, key);
-                byte[] size = BitConverter.GetBytes(hmac.Length + connectedString.Length);
-                byte[] packet = new byte[hmac.Length + connectedString.Length + 4];
-                Array.Copy(size, 0, packet, 0, 4);
-                Array.Copy(hmac, 0, packet, 4, hmac.Length);
-                Array.Copy(connectedString, 0, packet, hmac.Length + 4, connectedString.Length);
-                broadcastStream.Write(packet, 0, packet.Length);
-                broadcastStream.Flush();
-                if (enableSpy)
-                    Program.spyClient.SendPacket(packet);
-            }).Start();
-
             HandleClient client = new HandleClient();
             client.CommandReceived += Client_CommandReceived;
             client.StartClient(clientSocket, identifier, clientsList);
@@ -96,21 +79,18 @@ namespace TrustAgent
         void Client_CommandReceived(HandleClient handler, byte[] m)
         {
             string id = handler.clientID;
-            clientsList.Remove(id);
-            clientsHandlers.Remove(id);
-            handler.Disconnect();
-        }
+            byte[] dataLength = new byte[4];
+            Array.Copy(m, 0, dataLength, 0, 4);
+            byte[] data = new byte[BitConverter.ToInt32(dataLength)];
+            byte[] cleanPacket = new byte[4 + BitConverter.ToInt32(dataLength)];
+            Array.Copy(dataLength, cleanPacket, 4);
+            Array.Copy(m,4,data, 0, BitConverter.ToInt32(dataLength));
+            Array.Copy(data, 0, cleanPacket, 4, data.Length);
+            ClientConnected(cleanPacket, data, (TcpClient)clientsList[id], null);
 
-        public void DenyClientConnection(TcpClient clientSocket, string message)
-        {
-            new Thread(delegate ()
-            {
-                // TODO: Implement the connection denial message
-                /*NetworkStream broadcastStream = clientSocket.GetStream();
-                byte[] failedString = Encoding.ASCII.GetBytes("auth_failed");
-                broadcastStream.Write(failedString, 0, failedString.Length);
-                broadcastStream.Flush();*/
-            }).Start();
+            /*clientsList.Remove(id);
+            clientsHandlers.Remove(id);
+            handler.Disconnect();*/
         }
 
         public void Shutdown()
@@ -194,5 +174,4 @@ namespace TrustAgent
             }
         }
     }
-
 }

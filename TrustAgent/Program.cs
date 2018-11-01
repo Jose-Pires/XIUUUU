@@ -28,6 +28,7 @@ namespace TrustAgent
         public static TADatabase db;
         public static Server sv;
         public static MenuHandler mh;
+        public static Client spyClient;
 
         #endregion
 
@@ -45,10 +46,8 @@ namespace TrustAgent
 
             if (args.Length > 0)
             {
-                if (args.Contains("-spy"))
-                {
-                    //TODO: Create SPY Project and connect to it
-                }
+                enableSpy |= args.Contains("-spy");
+
                 if (args.Contains("-debug"))
                 {
                     ProcessLog(ProcessPrint.Info, "Debug is enabled!");
@@ -222,6 +221,20 @@ namespace TrustAgent
             sv = new Server(ips.First(), 12345);
             mh = new MenuHandler();
 
+            byte[] connectedString = Encoding.ASCII.GetBytes("f");
+            byte[] size = BitConverter.GetBytes(connectedString.Length);
+            byte[] packet = new byte[connectedString.Length + 4];
+            Array.Copy(size, 0, packet, 0, 4);
+            Array.Copy(connectedString, 0, packet, 4, connectedString.Length);
+
+            if (enableSpy)
+            {
+                spyClient = new Client();
+                spyClient.Connect(ips.First().ToString(), 22334, packet);
+            }
+
+
+
             sv.ClientConnected += Sv_ClientConnected;
             mh.CommandReceived += Mh_CommandReceived;
 
@@ -301,42 +314,18 @@ namespace TrustAgent
                 Helpers.ReplaceWith("");
                 ProcessLog(ProcessPrint.Debug, "New entity is trying to connect: " + packet.Entity);
             }
-            if (!enableSpy) {
-
-                //   TODO: Contact Spy
-                //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                //Console.OutputEncoding = Encoding.GetEncoding(1252);
-
-                //Helpers.ReplaceWith("");
-                /*ProcessLog(ProcessPrint.Info, "Full Data");
-                Console.WriteLine(Hex.Dump(m));
-                Console.WriteLine("");*/
-                /*ProcessLog(ProcessPrint.Info, "HMAC");
-                Console.WriteLine(Hex.Dump(hmac));
-                Console.WriteLine("");
-                ProcessLog(ProcessPrint.Info, "DATA");
-                Console.WriteLine(Hex.Dump(data));
-                Console.WriteLine("");*/
-            }
 
             TADatabase.ValidationError validation = db.ValidateEntity(packet, hmac, data);
             IPAddress ip = ((IPEndPoint)socket.Client.RemoteEndPoint).Address;
+            IPAddress local = ((IPEndPoint)socket.Client.LocalEndPoint).Address;
             if (validation == TADatabase.ValidationError.notFound)
                 ProcessLog(ProcessPrint.Debug, string.Format("Connection from entity {0} ({1}) refused, the user was not found", packet.Entity, ip));
             if (validation == TADatabase.ValidationError.invalidKey)
                 ProcessLog(ProcessPrint.Debug, string.Format("Connection from entity {0} ({1}) refused, the user has an invalid key or tempered data", packet.Entity, ip));
             if (validation == TADatabase.ValidationError.noError) {
-                if (enableSpy) {
-                    //TODO: Contact spy
-                    /*ProcessLog(ProcessPrint.spy, "This comunication was intercepted");
-                    byte[] connectedString = Encoding.ASCII.GetBytes("connected");
-                    Console.OutputEncoding = Encoding.GetEncoding(1252);
-                    Console.WriteLine(Hex.Dump(connectedString));
-                    Console.WriteLine("");*/
-                }
                 if (enableDebug)
                     ProcessLog(ProcessPrint.Debug, string.Format("Connection from entity {0} ({1}) accepted", packet.Entity, ip));
-                sv.AcceptClient(packet.Entity, socket);
+                sv.AcceptClient(packet.Entity, socket, enableSpy, local.ToString(), 22334);
             }
                 
             Console.WriteLine("");
