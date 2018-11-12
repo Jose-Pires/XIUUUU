@@ -7,8 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace TrustAgent
-{ 
-
+{
     public static class Helpers
     {
 
@@ -59,7 +58,7 @@ namespace TrustAgent
         /// </summary>
         /// <returns>The array to string.</returns>
         /// <param name="ba">Ba.</param>
-        public static string ByteArrayToString(byte[] ba)
+        public static string FromByteArrayToHex(this byte[] ba)
         {
             StringBuilder hex = new StringBuilder(ba.Length * 2);
             foreach (byte b in ba)
@@ -72,7 +71,7 @@ namespace TrustAgent
         /// </summary>
         /// <returns>The byte array.</returns>
         /// <param name="hex">String formatted as hex</param>
-        public static byte[] StringToByteArray(String hex)
+        public static byte[] FromHexToByteArray(this String hex)
         {
             int NumberChars = hex.Length;
             byte[] bytes = new byte[NumberChars / 2];
@@ -169,6 +168,16 @@ namespace TrustAgent
         public static bool ToBool(this String input)
         {
             return input == "y" || input == "Y";
+        }
+
+        /// <summary>
+        /// Shows a debug message if the debug mode is enabled for the program
+        /// </summary>
+        /// <param name="message">Message.</param>
+        public static void ProcessDebugMessage(string message)
+        {
+            if (Program.enableDebug)
+                StandardPrints.ProcessLog(StandardPrints.ProcessPrint.Debug, message);
         }
 
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace TrustAgent
 {
-    public class NetworkPacket
+    public class ClientMessage
     {
         public string Entity { get; set; }
         public string Operation { get; set; }

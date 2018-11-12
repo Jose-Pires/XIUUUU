@@ -1,5 +1,10 @@
-﻿<Properties StartupConfiguration="{DB7188CE-0A9C-4076-9D31-E6B7E0553A1E}|Default">
-  <MonoDevelop.Ide.Workbench />
+﻿<Properties StartupConfiguration="{9E4E9C93-5A34-4F54-93C1-9F677BC33DCB}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Status do TrustAgent">
+    <Files>
+      <File FileName="Status do TrustAgent" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.TrustAgent PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

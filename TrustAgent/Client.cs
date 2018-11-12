@@ -6,12 +6,6 @@ using System.Threading;
 namespace TrustAgent
 {
 
-    public class ServerEventArgs : EventArgs
-    {
-        public bool IsError { get; set; }
-        public string Message { get; set; }
-    }
-
     public class Client
     {
         public bool IsListening { get; set; }

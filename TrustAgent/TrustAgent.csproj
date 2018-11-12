@@ -12,9 +12,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="INIManager.cs" />
+    <Compile Remove="Hex.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Convertible Enums\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Cryptography\" />
   </ItemGroup>
 </Project>

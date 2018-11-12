@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrustAgent", "TrustAgent\Tr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spy", "Spy\Spy.csproj", "{62976721-35E2-4B99-B2E2-913E0D76C190}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAClientLib", "TAClientLib\TAClientLib.csproj", "{C0AFEE9C-64CB-406B-AEDC-C2767C03EBBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -25,5 +27,9 @@ Global
 		{62976721-35E2-4B99-B2E2-913E0D76C190}.Debug|x86.Build.0 = Debug|Any CPU
 		{62976721-35E2-4B99-B2E2-913E0D76C190}.Release|x86.ActiveCfg = Release|Any CPU
 		{62976721-35E2-4B99-B2E2-913E0D76C190}.Release|x86.Build.0 = Release|Any CPU
+		{C0AFEE9C-64CB-406B-AEDC-C2767C03EBBC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C0AFEE9C-64CB-406B-AEDC-C2767C03EBBC}.Debug|x86.Build.0 = Debug|Any CPU
+		{C0AFEE9C-64CB-406B-AEDC-C2767C03EBBC}.Release|x86.ActiveCfg = Release|Any CPU
+		{C0AFEE9C-64CB-406B-AEDC-C2767C03EBBC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
