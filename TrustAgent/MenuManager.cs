@@ -161,7 +161,7 @@ namespace TrustAgent
         bool ServerMenu() {
             ServerCommand command = ServerCommand.Invalid;
             while (command != ServerCommand.Back) {
-                Console.WriteLine("\r" + commandPrefix);
+                Console.Write("\r" + commandPrefix);
                 string cmd = Console.ReadLine();
                 command = (ServerCommand)ToCommand(Menu.Server, cmd);
                 switch (command) {

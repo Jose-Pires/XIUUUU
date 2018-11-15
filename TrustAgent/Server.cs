@@ -64,13 +64,10 @@ namespace TrustAgent
                     NetworkStream stream = clientSocket.GetStream();
                     stream.Read(dataLength, 0, 4);
 
-                    byte[] packet = new byte[BitConverter.ToInt32(dataLength) + 4];
-                    stream.Read(packet, 0, BitConverter.ToInt32(dataLength) + 4);
+                    byte[] packet = new byte[BitConverter.ToInt32(dataLength)];
+                    stream.Read(packet, 0, BitConverter.ToInt32(dataLength));
 
-                    byte[] data = new byte[BitConverter.ToInt32(dataLength)];
-                    Array.Copy(packet, 4, data, 0, BitConverter.ToInt32(dataLength));
-
-                    ClientConnected(data, clientSocket, e);
+                    ClientConnected(packet, clientSocket, e);
 
                 }
             }
@@ -192,8 +189,8 @@ namespace TrustAgent
             byte[] packetType = BitConverter.GetBytes(type.Value);
             byte[] data = Encoding.ASCII.GetBytes(json);
             byte[] hmac = ComputeHMAC(data, key);
-            byte[] size = BitConverter.GetBytes(hmac.Length + data.Length);
-            byte[] packet = new byte[data.Length + hmac.Length + 4];
+            byte[] size = BitConverter.GetBytes(hmac.Length + data.Length + 4);
+            byte[] packet = new byte[data.Length + hmac.Length + 8];
             Array.Copy(size, packet, 4);
             Array.Copy(packetType, 0, packet, 4, 4);
             Array.Copy(hmac, 0, packet, 8, hmac.Length);
@@ -208,14 +205,14 @@ namespace TrustAgent
         /// <param name="hmac">Hmac.</param>
         /// <param name="message">Message.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static void DeconstructPacket<T>(byte[] packet, out byte[] hmac, out T message)
+        public static void DeconstructPacket<T>(byte[] packet, out byte[] hmac, out T message, out byte[] raw)
         {
             hmac = new byte[32];
             message = default(T);
-
             Array.Copy(packet, 4, hmac, 0, 32);
             byte[] msg = new byte[packet.Length - 36];
             Array.Copy(packet, 36, msg, 0, packet.Length - 36);
+            raw = msg;
             message = JsonConvert.DeserializeObject<T>(Encoding.ASCII.GetString(msg));
         }
 

@@ -61,8 +61,8 @@ namespace TrustAgent
             computerName = Dns.GetHostName().Replace(".local", "").Replace(".lan", "");
             commandPrompt = string.Format("TrustAgent ({0}) > ", computerName);
 
-            ProcessDebugMessage(string.Format("Computer name: {0} > ", computerName));
-            ProcessDebugMessage(string.Format("Fetchig available IP's: {0} > ", computerName));
+            ProcessDebugMessage(string.Format("Computer name: {0} ", computerName));
+            ProcessDebugMessage("Fetchig available IP's");
 
             if (ips.Count <= 0)
             {
@@ -118,12 +118,18 @@ namespace TrustAgent
             IPAddress ip = ((IPEndPoint)socket.Client.RemoteEndPoint).Address;
             IPAddress local = ((IPEndPoint)socket.Client.LocalEndPoint).Address;
 
-            Server.DeconstructPacket(m, out byte[] hmac, out ClientMessage message);
+
+            Console.WriteLine("");
+            Console.WriteLine("PACKET MINUS PACKET SIZE");
+            Console.WriteLine(Hex.Dump(m));
+            PacketType packetType = Server.DecodePacketType(m);
+
+            Server.DeconstructPacket(m, out byte[] hmac, out ClientMessage message, out byte[] raw);
+
             if (enableDebug)
                 ReplaceWith("");
             ProcessDebugMessage(string.Format("New entity is trying to connect: {0} ({1})", message.Entity, ip));
-
-            Database.ValidationError validation = database.ValidateEntity(message, hmac, m);
+            Database.ValidationError validation = database.ValidateEntity(message, hmac, raw);
             switch (validation)
             {
                 case Database.ValidationError.NotFound:
@@ -144,7 +150,7 @@ namespace TrustAgent
                     break;
             }
             Console.WriteLine("");
-            Console.WriteLine("\r" + menuManager.commandPrefix);
+            Console.Write("\r" + menuManager.commandPrefix);
         }
 
 

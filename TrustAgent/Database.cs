@@ -225,6 +225,10 @@ namespace TrustAgent
             {
                 EntityClass storedEntity = _entities.First(m => m.EntityName == packet.Entity);
                 byte[] calcHMAC = SHA256hmac.ComputeHMAC(packetRaw, storedEntity.Key);
+                Console.WriteLine("ORIGINAL HMAC");
+                Console.WriteLine(Hex.Dump(hmac));
+                Console.WriteLine("COMPUTED HMAC");
+                Console.WriteLine(Hex.Dump(calcHMAC));
                 return !SHA256hmac.CompareHMAC(hmac, calcHMAC) ? ValidationError.InvalidKey : ValidationError.NoError;
                 //return (Helpers.ByteArrayToString(hmac) == Helpers.ByteArrayToString(calcHMAC)) ? ValidationError.NoError : ValidationError.InvalidKey;
             }

@@ -31,7 +31,7 @@ namespace TAClientLib
         public event ServerCommandHandler Connected;
         public delegate void ServerCommandHandler();
         public event EntitiesListResponseHandler EntityListReceived;
-        public delegate void EntitiesListResponseHandler(EntitiesList e);
+        public delegate void EntitiesListResponseHandler(EntityClass e);
 
         internal Client client;
         internal Client spy;
@@ -50,7 +50,7 @@ namespace TAClientLib
         {
             if (Helpers.ValidHex(key))
             {
-                this.key = Helpers.StringToByteArray(key);
+                this.key = key.FromHexToByteArray();
                 if (this.key.Length != 32)
                     throw new InvalidKeyException("Key is not 256bit long");
             }
@@ -73,14 +73,13 @@ namespace TAClientLib
         /// <param name="Port">TA Port.</param>
         public void AttemptConnect(string IP, int Port)
         {
-            NetworkPacket payload = new NetworkPacket
+            ClientMessage payload = new ClientMessage
             {
                 Entity = entity,
                 Operation = ClientOperations.AttemptConnect.Value,
                 Message = ""
             };
-            byte[] message = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(payload));
-            byte[] packet = BuildPacket(message);
+            byte[] packet = Client.BuildPacket(payload, key, PacketType.ClientMessage);
             firstPacket = packet;
             client.Connect(IP, Port, packet);
         }
@@ -95,40 +94,17 @@ namespace TAClientLib
         /// The list will be returned on the event <see cref="EntityListReceived"/>
         /// </summary>
         public void RequestConnectedEntities() {
-            NetworkPacket payload = new NetworkPacket
+            ClientMessage payload = new ClientMessage
             {
                 Entity = entity,
                 Operation = ClientOperations.RequestConnectedEntities.Value,
                 Message = ""
             };
-            byte[] message = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(payload));
-            byte[] packet = BuildPacket(message);
+            byte[] packet = Client.BuildPacket(payload, key, PacketType.ClientMessage);
             client.SendRequest(packet);
         }
 
-        /// <summary>
-        /// Builds the packet to be sent to the network. Calculates the HMAC of
-        /// the message and size of the HMAC + Message
-        /// The final packet is like this
-        /// +---------------------------------------------+
-        /// | PACKET SIZE | HMAC (SHA256) |    MESSAGE    |
-        /// |   4 BYTES   |   32 BYTES    | VARIABLE SIZE |
-        /// +---------------------------------------------+
-        /// </summary>
-        /// <returns>The packet.</returns>
-        /// <param name="message">The message part of the packet.</param>
-        byte[] BuildPacket(byte[] message)
-        {
-            byte[] hmac = Helpers.Encode(message, key);
-            byte[] size = BitConverter.GetBytes(message.Length + hmac.Length);
-            byte[] packet = new byte[message.Length + hmac.Length + 4];
-            Array.Copy(size, packet, 4);
-            Array.Copy(hmac, 0, packet, 4, hmac.Length);
-            Array.Copy(message, 0, packet, 4 + hmac.Length, message.Length);
-            return packet;
-        }
-
-        void Client_EntityListReceived(EntitiesList e)
+        void Client_EntityListReceived(EntityClass e)
         {
             EntityListReceived(e);
         }
@@ -186,11 +162,10 @@ namespace TAClientLib
         /// <param name="e">E.</param>
         void Client_InvalidHMAC(ServerCommandEventArgs e)
         {
-            throw new ConnectionFailedException("Failed to validate HMAC", new HMACFailedException("HMAC Validation failed", e.OriginalHMAC, e.ComputedHMAC));
+            throw new ConnectionFailedException("Failed to validate HMAC", new HMACFailedException("HMAC Validation failed", e.OriginalHMAC.FromByteArrayToHex(), e.ComputedHMAC.FromByteArrayToHex()));
         }
 
         #endregion
-
     }
 
     #region "Exceptions Declarations"
