@@ -1,20 +1,40 @@
-﻿using System;
+﻿/*
+ * TrustAgent.Hex.cs 
+ * Developer: Andrew Savinykh
+ * Source: https://codereview.stackexchange.com/q/145506
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Generates a string containing an hex dump of byte array
+ * 
+ * Requires initialization: YES
+ * Contains:
+ *     Class Level Variables: 6 Private (Read Only), 1 Private
+ *     Inner Classes: 1 Public
+ *     Enums: 6 Private
+ *     Methods:
+ *         Static: 1 Public
+ *         Non Static: 7 Private
+ * 
+ */
+
+using System;
 using System.Text;
 
 namespace TrustAgent
 {
     public class Hex
     {
-        private readonly byte[] _bytes;
-        private readonly int _bytesPerLine;
-        private readonly bool _showHeader;
-        private readonly bool _showOffset;
-        private readonly bool _showAscii;
+        readonly byte[] _bytes;
+        readonly int _bytesPerLine;
+        readonly bool _showHeader;
+        readonly bool _showOffset;
+        readonly bool _showAscii;
 
-        private readonly int _length;
+        readonly int _length;
 
-        private int _index;
-        private readonly StringBuilder _sb = new StringBuilder();
+        int _index;
+        readonly StringBuilder _sb = new StringBuilder();
 
         public Hex(byte[] bytes, int bytesPerLine, bool showHeader, bool showOffset, bool showAscii)
         {
@@ -28,14 +48,10 @@ namespace TrustAgent
 
         public static string Dump(byte[] bytes, int bytesPerLine = 16, bool showHeader = true, bool showOffset = true, bool showAscii = true)
         {
-            if (bytes == null)
-            {
-                return "<null>";
-            }
-            return (new Hex(bytes, bytesPerLine, showHeader, showOffset, showAscii)).Dump();
+            return bytes == null ? "<null>" : (new Hex(bytes, bytesPerLine, showHeader, showOffset, showAscii)).Dump();
         }
 
-        private string Dump()
+        string Dump()
         {
             if (_showHeader)
             {
@@ -45,7 +61,7 @@ namespace TrustAgent
             return _sb.ToString();
         }
 
-        private void WriteHeader()
+        void WriteHeader()
         {
             if (_showOffset)
             {
@@ -62,7 +78,7 @@ namespace TrustAgent
             _sb.AppendLine();
         }
 
-        private void WriteBody()
+        void WriteBody()
         {
             while (_index < _length)
             {
@@ -96,18 +112,18 @@ namespace TrustAgent
             }
         }
 
-        private void WriteOffset()
+        void WriteOffset()
         {
             _sb.Append($"{_index:X8}   ");
         }
 
-        private void WriteByte()
+        void WriteByte()
         {
             _sb.Append($"{_bytes[_index]:X2}");
             _index++;
         }
 
-        private void WriteAscii()
+        void WriteAscii()
         {
             int backtrack = ((_index - 1) / _bytesPerLine) * _bytesPerLine;
             int length = _index - backtrack;
@@ -122,7 +138,7 @@ namespace TrustAgent
             }
         }
 
-        private string Translate(byte b)
+        string Translate(byte b)
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             return b < 32 ? "." : Encoding.GetEncoding(1252).GetString(new[] { b });

@@ -1,4 +1,20 @@
-﻿using System;
+﻿/*
+ * TrustAgent.TabkeParser.cs 
+ * Developer: HuBeZa
+ * Source: https://stackoverflow.com/a/19353995/1152683
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Creates an table and outputs it on the terminal properly formatted
+ * 
+ * Requires initialization: NO
+ * Contains:
+ *     Methods:
+ *         Static: 1 Private, 3 Public
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

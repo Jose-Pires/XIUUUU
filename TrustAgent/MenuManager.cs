@@ -1,8 +1,25 @@
-﻿using System;
+﻿/*
+ * TrustAgent.MenuManager.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Development
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Operates the menus for the program
+ * 
+ * Requires initialization: YES
+ * Contains:
+ *     Class Level Variables: 1 Private (Read Only), 1 Public
+ *     Inner Classes: 1 Public
+ *     Enums: 6 Private
+ *     Methods:
+ *         Non Static: 5 Private
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 
 using static TrustAgent.ActionProcessor;
@@ -63,6 +80,9 @@ namespace TrustAgent
 
         #endregion
 
+        /// <summary>
+        /// Manages the main menu
+        /// </summary>
         void MainMenu() {
             MainCommand command = MainCommand.Invalid;
             bool terminate = false;
@@ -99,6 +119,10 @@ namespace TrustAgent
             Program.database.WriteToFile();
         }
 
+        /// <summary>
+        /// Manages the keys menu
+        /// </summary>
+        /// <returns><c>true</c>, if the exit command was issued, <c>false</c> otherwise.</returns>
         bool KeysMenu() {
             KeysCommand command = KeysCommand.Invalid;
             while (command != KeysCommand.Back) {
@@ -158,6 +182,10 @@ namespace TrustAgent
             return false;
         }
 
+        /// <summary>
+        /// Manages the server menu
+        /// </summary>
+        /// <returns><c>true</c>, if the exit command was issued, <c>false</c> otherwise.</returns>
         bool ServerMenu() {
             ServerCommand command = ServerCommand.Invalid;
             while (command != ServerCommand.Back) {
@@ -181,7 +209,10 @@ namespace TrustAgent
                     case ServerCommand.Back: break;
                     case ServerCommand.Clear: Console.Clear(); break;
                     case ServerCommand.Disconnect:
-                        //TODO: Disconnect entity method
+                        MenuEventArgs listArgs = ProcessCommandArgs(Menu.Server, ServerCommand.Disconnect, cmd);
+                        string entity = (string)listArgs.Arguments.First(m => m.Key.Equals(ServerArg.Entity)).Value;
+                        Program.server.DisconnectClient(entity);
+                        ProcessLog(ProcessPrint.Info, "Entity " + entity + " was kicked", true);
                         break;
                     case ServerCommand.Exit: return true;
                     case ServerCommand.Help: HelpPrints.PrintServerHelp(); break;
@@ -189,7 +220,19 @@ namespace TrustAgent
                         ProcessLog(ProcessPrint.Error, "Invalid command", true);
                         break;
                     case ServerCommand.ServerInfo:
-                        //TODO: Print server info
+                        ProcessLog(ProcessPrint.Info, string.Format("Server listening at {0}:{1}", Program.server.ListeningIP, Program.server.ListeningPort));
+                        ProcessLog(ProcessPrint.Info, string.Format("There are {0} connected clients", Program.server.clientHandlers.Count));
+                        Console.WriteLine("");
+                        List<(string, string)> cmds1 = new List<(string, string)>();
+                        foreach (string key in Program.server.clientHandlers.Keys)
+                        {
+                            ClientHandler handler = (ClientHandler)Program.server.clientHandlers[key];
+                            IPAddress ip = ((IPEndPoint)handler.Socket.Client.RemoteEndPoint).Address;
+                            cmds1.Add((key, ip.ToString()));
+                        }
+                        Console.WriteLine(cmds1.ToStringTable(
+                            new[] { "Entity", "IP" },
+                            a => a.Item1, a => a.Item2));
                         break;
                 }
             }

@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+ * TrustAgent.Server.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Development
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * This class handles all server related operations on the network level
+ * 
+ * Requires initialization: YES
+ * Contains:
+ *     Class Level Variables: 2 Private, 4 Public
+ *     Events: 2 Public
+ *     Delegates: 2 Public
+ *     Methods:
+ *         Non Static: 3 Private, 6 Public
+ *         Static: 3 Public 
+ * 
+ */
+
+using System;
 using System.Collections;
 using System.Net;
 using System.Net.Sockets;
@@ -21,6 +40,8 @@ namespace TrustAgent
         public EventArgs e;
 
         public Hashtable clientHandlers = new Hashtable();
+        public IPAddress ListeningIP { get; }
+        public int ListeningPort { get; }
 
         #endregion
 
@@ -40,10 +61,17 @@ namespace TrustAgent
 
         public Server(IPAddress ip, int port)
         {
+            ListeningIP = ip;
+            ListeningPort = port;
             thread = new Thread(() => StartListening(ip, port));
             thread.Start();
         }
 
+        /// <summary>
+        /// Starts listening for incoming connections
+        /// </summary>
+        /// <param name="ip">Ip.</param>
+        /// <param name="port">Port.</param>
         void StartListening(IPAddress ip, int port)
         {
             TcpListener serverSocket = new TcpListener(ip, port);
@@ -73,11 +101,11 @@ namespace TrustAgent
             }
 
             BroadcastShutdownToClients();
+            foreach (DictionaryEntry item in clientHandlers)
+                ((ClientHandler)item.Value).Disconnect();
             if (clientSocket != null)
                 clientSocket.Close();
             serverSocket.Stop();
-            foreach (DictionaryEntry item in clientHandlers)
-                ((ClientHandler)item.Value).Disconnect();
         }
 
         /// <summary>
@@ -97,13 +125,54 @@ namespace TrustAgent
 
             ClientHandler client = new ClientHandler(entity, socket);
             client.MessageReceived += Client_MessageReceived;
+            client.ConnectionLost += Client_ConnectionLost;
 
             clientHandlers.Add(entity, client);
         }
 
+        /// <summary>
+        /// Handles the connection lost to a client
+        /// This happens when a client disconnects unexpectedly
+        /// </summary>
+        /// <param name="client">Client that raised the event.</param>
+        void Client_ConnectionLost(ClientHandler client)
+        {
+            IPAddress ip = ((IPEndPoint)client.Socket.Client.RemoteEndPoint).Address;
+            if (Program.enableDebug)
+                Helpers.ReplaceWith("");
+            Helpers.ProcessDebugMessage(string.Format("The entity {0} ({1}) closed the connection unexpectedly!", client.Entity, ip));
+            clientHandlers.Remove(client.Entity);
+            if (Program.enableDebug)
+            {
+                Console.WriteLine("");
+                Console.Write("\r" + Program.menuManager.commandPrefix);
+            }
+        }
+
+
+        /// <summary>
+        /// Denies the connection of the client, sends out the reason of the rejection
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="message">Message.</param>
+        /// <param name="socket">Socket.</param>
+        /// <param name="key">Key.</param>
         public void DennyClient(string entity, ServerMessages message, TcpClient socket, byte[] key) {
             SendMessage(new ServerCommand { Command = ServerOperations.ConnectionRefused.Value, Message = message.Value },
                         PacketType.ServerCommand, key, socket);
+        }
+
+        /// <summary>
+        /// Disconnects a client
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        public void DisconnectClient(string entity) {
+            if (Program.server.clientHandlers.Contains(entity))
+            {
+                ClientHandler client = (ClientHandler)Program.server.clientHandlers[entity];
+                client.Disconnect();
+                clientHandlers.Remove(entity);
+            }
         }
 
         /// <summary>

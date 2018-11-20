@@ -1,4 +1,20 @@
-﻿using System;
+﻿/*
+ * TrustAgent.EntityClass.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Model used to store entities and their keys in the database
+ * 
+ * Requires initialization: NO
+ * Serializable
+ * Contains:
+ *     Getters/Setters: 2 Public (work as variables)
+ * 
+ */
+
+using System;
+
 namespace TrustAgent
 {
     [Serializable]

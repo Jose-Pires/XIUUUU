@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+ * TrustAgent.Program.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Development
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * This class is the main program, handles the startup, and the events of the 
+ * database, server and menuhandler
+ * 
+ * Requires initialization: NO
+ * Contains:
+ *     Class Level Constants: 1 Public
+ *     Class Level Variables: 6 Private, 6 Public
+ *     Methods:
+ *         Static: 7 Public 
+ * 
+ */
+
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Net;
@@ -39,11 +57,15 @@ namespace TrustAgent
 
         public static Database database;
         public static Server server;
-        static MenuManager menuManager;
+        public static MenuManager menuManager;
         public static Client spy;
 
         #endregion
 
+        /// <summary>
+        /// The entry point of the program, where the program control starts and ends.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         static void Main(string[] args)
         {
             Console.Clear();
@@ -109,19 +131,70 @@ namespace TrustAgent
 
         }
 
+        /// <summary>
+        /// Handles all messages received by the client (except the first one)
+        /// </summary>
+        /// <param name="m">Packet without the byte length</param>
+        /// <param name="clientHandler">Client handler.</param>
         static void Server_MessageReceived(byte[] m, ClientHandler clientHandler)
         {
+            IPAddress ip = ((IPEndPoint)clientHandler.Socket.Client.RemoteEndPoint).Address;
+
+            PacketType packetType = Server.DecodePacketType(m);
+            Server.DeconstructPacket(m, out byte[] hmac, out ClientMessage message, out byte[] raw);
+
+            if (enableDebug)
+                ReplaceWith("");
+            ProcessDebugMessage(string.Format("Message received from {0} ({1})", message.Entity, ip));
+
+            // This step allows the verification of:
+            // 1. if the entity is still accepted by the server
+            // 2. if the hmac is corect 
+            Database.ValidationError validation = database.ValidateEntity(message, hmac, raw);
+
+            switch (validation) {
+                case Database.ValidationError.NoError:
+                    List<(string, string)> entities = FetchConnectedEntities();
+                    break;
+                case Database.ValidationError.InvalidKey:
+                    ProcessDebugMessage(string.Format("HMAC for message from {0} ({1}) failed!", message.Entity, ip));
+                    break;
+                case Database.ValidationError.NotFound:
+                    ProcessDebugMessage(string.Format("Entity {0} at {1} not found!", message.Entity, ip));
+                    break;
+            }
+
+            if (enableDebug) {
+                Console.WriteLine("");
+                Console.Write("\r" + menuManager.commandPrefix);
+            }
+
         }
 
+        /// <summary>
+        /// Fetchs the connected entities.
+        /// </summary>
+        /// <returns>The connected entities.</returns>
+        static List<(string, string)> FetchConnectedEntities() {
+            List<(string, string)> entities = new List<(string, string)>();
+            foreach (ClientHandler client in server.clientHandlers.Values) {
+                IPAddress ip = ((IPEndPoint)client.Socket.Client.RemoteEndPoint).Address;
+                entities.Add((client.Entity, ip.ToString()));
+            }
+            return entities;
+        }
+
+        /// <summary>
+        /// ClientConnected handler, handles the first connection of a client.
+        /// </summary>
+        /// <param name="m">Packet without the packet length</param>
+        /// <param name="socket">Socket.</param>
+        /// <param name="e">E.</param>
         static void Server_ClientConnected(byte[] m, TcpClient socket, EventArgs e)
         {
             IPAddress ip = ((IPEndPoint)socket.Client.RemoteEndPoint).Address;
             IPAddress local = ((IPEndPoint)socket.Client.LocalEndPoint).Address;
 
-
-            Console.WriteLine("");
-            Console.WriteLine("PACKET MINUS PACKET SIZE");
-            Console.WriteLine(Hex.Dump(m));
             PacketType packetType = Server.DecodePacketType(m);
 
             Server.DeconstructPacket(m, out byte[] hmac, out ClientMessage message, out byte[] raw);
@@ -149,13 +222,21 @@ namespace TrustAgent
                     server.AcceptClient(message.Entity, socket, database.RetreiveEntityKey(message.Entity), enableSpy, local.ToString());
                     break;
             }
-            Console.WriteLine("");
-            Console.Write("\r" + menuManager.commandPrefix);
+
+            if (enableDebug)
+            {
+                Console.WriteLine("");
+                Console.Write("\r" + menuManager.commandPrefix);
+            }
         }
 
 
         #region "Initialization Helpers"
 
+        /// <summary>
+        /// Processes the initialization arguments
+        /// </summary>
+        /// <param name="args">Arguments.</param>
         static void ProcessArgs(string[] args) {
             enableSpy |= args.Contains("-spy");
             enableDebug |= args.Contains("-debug");
@@ -175,7 +256,7 @@ namespace TrustAgent
                     ProcessLog(ProcessPrint.Warn, "Unable to parse the port, falling to default!");
             }
             else
-                ProcessDebugMessage("Port not detected, falling to default!");
+                ProcessLog(ProcessPrint.Warn, "Port not detected, falling to default!");
 
             if (args.Contains("-seed1")) {
                 int pos = Array.IndexOf(args, "-seed1");
@@ -203,6 +284,9 @@ namespace TrustAgent
 
         }
 
+        /// <summary>
+        /// Validates the seed1 argument
+        /// </summary>
         static void Seed1Validation() {
             if (File.Exists(dbPath))
             {
@@ -221,6 +305,9 @@ namespace TrustAgent
             }
         }
 
+        /// <summary>
+        /// Validates the seed2 argument
+        /// </summary>
         static void Seed2Validation()
         {
             if (File.Exists(dbPath))
@@ -239,8 +326,6 @@ namespace TrustAgent
                 }
             }
         }
-
-
 
         #endregion
 

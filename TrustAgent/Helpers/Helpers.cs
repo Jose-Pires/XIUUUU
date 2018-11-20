@@ -1,4 +1,19 @@
-﻿using System;
+﻿/*
+ * TrustAgent.Helpers.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Contains multiple helpers and extensions
+ * 
+ * Requires initialization: NO
+ * Contains:
+ *     Methods:
+ *         Static: 12 Public
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;

@@ -10,6 +10,7 @@ namespace TAClientLib
         public static ServerOperations Connected { get { return new ServerOperations("connected"); } }
         public static ServerOperations ServerShutdown { get { return new ServerOperations("sv_shutdown"); } }
         public static ServerOperations ConnectionRefused { get { return new ServerOperations("connection_refused"); } }
+        public static ServerOperations KickEntity { get { return new ServerOperations("connection_terminated"); } }
     }
 
     public class ServerMessages {

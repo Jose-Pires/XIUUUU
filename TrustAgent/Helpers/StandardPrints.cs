@@ -1,4 +1,25 @@
-﻿using System;
+﻿/*
+ * TrustAgent.StandardPrints.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Contains the standard prints to be used across the program
+ * This contains preset formatting and text coloring
+ * 
+ * Requires initialization: NO
+ * Contains:
+ *     Inner Classes: 1 Public (Static)
+ *         Methods:
+ *             Static: 3 Public 
+ *     Class Level Variables: 1 Private
+ *     Enums: 1 Public
+ *     Methods:
+ *         Static: 1 Public
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 
 namespace TrustAgent

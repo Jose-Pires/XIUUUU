@@ -1,4 +1,19 @@
-﻿using System;
+﻿/*
+ * TrustAgent.AESCipher.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Contains multiple operations using AES256
+ * 
+ * Requires initialization: NO
+ * Contains:
+ *     Methods:
+ *         Static: 5 Public
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;

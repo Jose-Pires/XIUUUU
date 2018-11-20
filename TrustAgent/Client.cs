@@ -1,7 +1,21 @@
-﻿using System;
+﻿/*
+ * TrustAgent.Client.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Sends data to the spy server
+ * 
+ * Requires initialization: YES
+ * Contains:
+ *     Class Level Variables: 2 Private, 1 Public
+ *     Methods:
+ *         Non Static: 1 Private, 1 Public
+ * 
+ */
+
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 
 namespace TrustAgent
 {

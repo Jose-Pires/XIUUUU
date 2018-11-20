@@ -1,4 +1,19 @@
-﻿using System;
+﻿/*
+ * TrustAgent.PacketType.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * An enum simulator that can be converted to a int
+ * 
+ * Requires initialization: NO
+ * Contains:
+ *     Getters/Setters: 1 Public (work as variable)
+ *     Methods:
+ *         Static: 3 Public
+ * 
+ */
+
 namespace TrustAgent
 {
     public class PacketType

@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+ * TrustAgent.Database.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Development
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Manages the Trust Agent database
+ * 
+ * Requires initialization: YES
+ * Contains:
+ *     Class Level Variables: 3 Private (Read Only), 3 Public
+ *     Enums: 3 Public
+ *     Methods:
+ *         Non Static: 2 Private, 6 Public
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -225,10 +242,6 @@ namespace TrustAgent
             {
                 EntityClass storedEntity = _entities.First(m => m.EntityName == packet.Entity);
                 byte[] calcHMAC = SHA256hmac.ComputeHMAC(packetRaw, storedEntity.Key);
-                Console.WriteLine("ORIGINAL HMAC");
-                Console.WriteLine(Hex.Dump(hmac));
-                Console.WriteLine("COMPUTED HMAC");
-                Console.WriteLine(Hex.Dump(calcHMAC));
                 return !SHA256hmac.CompareHMAC(hmac, calcHMAC) ? ValidationError.InvalidKey : ValidationError.NoError;
                 //return (Helpers.ByteArrayToString(hmac) == Helpers.ByteArrayToString(calcHMAC)) ? ValidationError.NoError : ValidationError.InvalidKey;
             }
@@ -285,6 +298,10 @@ namespace TrustAgent
 
         #endregion
 
+        /// <summary>
+        /// Prints all the entities
+        /// </summary>
+        /// <param name="ShowKey">If set to <c>true</c> show key.</param>
         public void PrintEntities(bool ShowKey) {
             if (entities != null) {
                 byte[] key = GenKey(seed1, selector);

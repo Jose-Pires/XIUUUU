@@ -25,9 +25,9 @@ namespace Spy
             }
 
             byte[] hmac = new byte[32];
-            Array.Copy(m, hmac, 32);
-            byte[] data = new byte[m.Length - 32];
-            Array.Copy(m, 32, data, 0, m.Length - 32);
+            Array.Copy(m, 4, hmac, 0, 32);
+            byte[] data = new byte[m.Length - 36];
+            Array.Copy(m, 36, data, 0, m.Length - 36);
             string str = Encoding.ASCII.GetString(data);
             IPAddress ip = ((IPEndPoint)socket.Client.RemoteEndPoint).Address;
             PrintBasic("New packet received from " + ip);
@@ -37,14 +37,10 @@ namespace Spy
             PrintBasic("The packet has " + data.Length + " bytes.");
             PrintBasic("Decoding packet...");
             PrintBasic("Found HMAC data");
-            Console.WriteLine(Hex.Dump(hmac));
-            Console.WriteLine("");
             PrintBasic("Trying to convert HMAC");
             Console.WriteLine("HMAC: " + ByteArrayToString(hmac));
             Console.WriteLine("");
             PrintBasic("Found DATA");
-            Console.WriteLine(Hex.Dump(data));
-            Console.WriteLine("");
             PrintBasic("Trying to convert DATA");
             Console.WriteLine("DATA: " + Encoding.ASCII.GetString(data));
         }

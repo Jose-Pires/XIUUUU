@@ -1,6 +1,30 @@
-﻿using System;
+﻿/*
+ * TrustAgent.ActionProcessor.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Development
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Handles the changes to the Trust Agent database by
+ * 1. Creating stacks of operations to preform over the database
+ * 2. Validating if each operation is valid
+ * 3. Saving changes in a batch
+ * 4. Discarding changes
+ * 
+ * Requires initialization: NO
+ * Contains:
+ *     Inner Classes: 1 Public (Static)
+ *         Class Level Variables: 1 Private
+ *         Getters/Setters: 1 Public
+ *         Enums: 1 Public
+ *         Methods:
+ *             Static: 5 Public
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using static TrustAgent.Helpers;
 using static TrustAgent.StandardPrints;
 
