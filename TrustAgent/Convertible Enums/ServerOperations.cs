@@ -32,6 +32,10 @@ namespace TrustAgent
         public static ServerOperations ServerShutdown { get { return new ServerOperations("sv_shutdown"); } }
         public static ServerOperations ConnectionRefused { get { return new ServerOperations("connection_refused"); } }
         public static ServerOperations KickEntity { get { return new ServerOperations("connection_terminated"); } }
+        public static ServerOperations ResponseSuccessEntities { get { return new ServerOperations("response_success_entities"); } }
+        public static ServerOperations InvalidHMAC { get { return new ServerOperations("hmac_verification_failed"); } }
+        public static ServerOperations EntityNoLongerAvailable { get { return new ServerOperations("entity_no_longer_available"); } }
+        public static ServerOperations InvalidComand { get { return new ServerOperations("invalid_comand"); } }
     }
 
     public class ServerMessages {

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Linq;
 using System.Net.Sockets;
+using Newtonsoft.Json;
 
 using static TrustAgent.StandardPrints;
 using static TrustAgent.Helpers;
@@ -154,13 +155,41 @@ namespace TrustAgent
 
             switch (validation) {
                 case Database.ValidationError.NoError:
-                    List<(string, string)> entities = FetchConnectedEntities();
+                    if (ClientOperations.RequestConnectedEntities.Value == message.Operation)
+                        RequestedEntitiesList(clientHandler);
+                    else {
+                        ServerCommand sv_cmd_invalid_operation = new ServerCommand
+                        {
+                            Command = ServerOperations.InvalidComand.Value
+                        };
+                        server.SendMessage(sv_cmd_invalid_operation,
+                                       PacketType.ServerCommand,
+                                       database.RetreiveEntityKey(clientHandler.Entity),
+                                       clientHandler.Socket);
+                    }
                     break;
                 case Database.ValidationError.InvalidKey:
                     ProcessDebugMessage(string.Format("HMAC for message from {0} ({1}) failed!", message.Entity, ip));
+                    ServerCommand sv_cmd_invalid_hmac = new ServerCommand
+                    {
+                        Command = ServerOperations.InvalidHMAC.Value,
+                        Message = string.Format("RECEIVED_HMAC={0}|COMPUTED_HMAC={1}", hmac.FromByteArrayToHex(), SHA256hmac.ComputeHMAC(raw, database.RetreiveEntityKey(clientHandler.Entity)).FromByteArrayToHex())
+                    };
+                    server.SendMessage(sv_cmd_invalid_hmac, 
+                                       PacketType.ServerCommand, 
+                                       DEFAULT_KEY.FromHexToByteArray(), 
+                                       clientHandler.Socket);
                     break;
                 case Database.ValidationError.NotFound:
                     ProcessDebugMessage(string.Format("Entity {0} at {1} not found!", message.Entity, ip));
+                    ServerCommand sv_cmd_entity_not_found = new ServerCommand
+                    {
+                        Command = ServerOperations.EntityNoLongerAvailable.Value
+                    };
+                    server.SendMessage(sv_cmd_entity_not_found, 
+                                       PacketType.ServerCommand, 
+                                       database.RetreiveEntityKey(clientHandler.Entity), 
+                                       clientHandler.Socket);
                     break;
             }
 
@@ -172,12 +201,31 @@ namespace TrustAgent
         }
 
         /// <summary>
+        /// Sends the message to the client with the connected clients
+        /// </summary>
+        /// <param name="clientHandler">Client handler.</param>
+        static void RequestedEntitiesList(ClientHandler clientHandler) {
+            List<(string, string)> entities = FetchConnectedEntities(clientHandler.Entity);
+            ServerCommand sv_cmd_entities = new ServerCommand
+            {
+                Command = ServerOperations.ResponseSuccessEntities.Value,
+                Message = Convert.ToBase64String(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(entities)))
+            };
+            server.SendMessage(sv_cmd_entities,
+                               PacketType.ServerCommand,
+                               database.RetreiveEntityKey(clientHandler.Entity),
+                               clientHandler.Socket);
+        }
+
+        /// <summary>
         /// Fetchs the connected entities.
         /// </summary>
         /// <returns>The connected entities.</returns>
-        static List<(string, string)> FetchConnectedEntities() {
+        static List<(string, string)> FetchConnectedEntities(string entity) {
             List<(string, string)> entities = new List<(string, string)>();
             foreach (ClientHandler client in server.clientHandlers.Values) {
+                if (client.Entity == entity)
+                    continue;
                 IPAddress ip = ((IPEndPoint)client.Socket.Client.RemoteEndPoint).Address;
                 entities.Add((client.Entity, ip.ToString()));
             }

@@ -73,7 +73,7 @@ namespace TrustAgent
                     MessageReceived(this, data);
 
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     if (!stop) {
                         //Connection Lost to the Client

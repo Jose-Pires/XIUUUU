@@ -166,13 +166,13 @@ namespace TrustAgent
         }
 
         /// <summary>
-        /// Generates a time stamp with the format HHmmss
+        /// Generates a time stamp with the format yyyyMMddHHmmssffff
         /// </summary>
         /// <returns>The timestamp.</returns>
         /// <param name="value">Value.</param>
         public static String GetTimestamp(DateTime value)
         {
-            return value.ToString("HHmmss");
+            return value.ToString("yyyyMMddHHmmssffff");
         }
 
         /// <summary>
