@@ -118,7 +118,7 @@ namespace TrustAgent
                     {
                   Tuple.Create("keys", "Enters the submenu to manage the keys"),
                   Tuple.Create("server", "Enters the server informations"),
-                  Tuple.Create("system", "Enters the TrustAgent Configurations"),
+                  Tuple.Create("system", "Shows the server configuration"),
                   Tuple.Create("",""),
                   Tuple.Create("clear", "Clears the output"),
                   Tuple.Create("help", "Shows the help of the current selected menu"),
@@ -141,7 +141,6 @@ namespace TrustAgent
                   Tuple.Create("list [options]", "Lists the entities on the TrustAgent database"),
                   Tuple.Create("add [username] [key]", "Adds a new client to the TrustAgent database"),
                   Tuple.Create("del [username]", "Deletes an client from the TrustAgent database"),
-                  Tuple.Create("import [file path] [options]", "Imports data from a csv file"),
                   Tuple.Create("",""),
                   Tuple.Create("save", "Saves current changes without leaving the current menu"),
                   Tuple.Create("discard", "Discards current changes without leaving the current menu"),

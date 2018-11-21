@@ -15,6 +15,7 @@ namespace TAClientLib
         public static ServerOperations InvalidHMAC { get { return new ServerOperations("hmac_verification_failed"); } }
         public static ServerOperations EntityNoLongerAvailable { get { return new ServerOperations("entity_no_longer_available"); } }
         public static ServerOperations InvalidComand { get { return new ServerOperations("invalid_comand"); } }
+        public static ServerOperations InvalidTime { get { return new ServerOperations("invalid_time"); } }
     }
 
     public class ServerMessages {

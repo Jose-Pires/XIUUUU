@@ -1,7 +1,7 @@
 ﻿/*
  * TrustAgent.MenuManager.cs 
  * Developer: Pedro Cavaleiro
- * Developement stage: Development
+ * Developement stage: Completed
  * Tested on: macOS Mojave (10.14.1) -> PASSED
  * 
  * Operates the menus for the program
@@ -105,7 +105,25 @@ namespace TrustAgent
                             command = MainCommand.Exit;
                         break;
                     case MainCommand.System:
-                        //TODO: build the system menu
+                        Console.WriteLine("");
+                        IEnumerable<Tuple<string, string>> cmds =
+                            new[]
+                            {
+                              Tuple.Create("SEED 1", Program.dbSeed1.ToString()),
+                              Tuple.Create("SEED 2", Program.dbSeed2.ToString()),
+                              Tuple.Create("",""),
+                              Tuple.Create("CIPHER","AES-256"),
+                              Tuple.Create("HMAC", "SHA-256"),
+                              Tuple.Create("",""),
+                              Tuple.Create("LOCAL IP", Program.server.ListeningIP.ToString()),
+                              Tuple.Create("LOCAL PORT", Program.server.ListeningPort.ToString()),
+                              Tuple.Create("",""),
+                              Tuple.Create("DEBUG",Program.enableDebug.ToString()),
+                              Tuple.Create("SPY",Program.enableSpy.ToString())
+                            };
+                        Console.WriteLine(cmds.ToStringTable(
+                            new[] { "PARAMETER", "VALUE" },
+                            a => a.Item1, a => a.Item2));
                         break;
                     case MainCommand.Clear: Console.Clear(); break;
                     case MainCommand.Help: HelpPrints.PrintMainHelp(); break;
@@ -155,18 +173,6 @@ namespace TrustAgent
                     case KeysCommand.Discard: Keys.Discard(); break;
                     case KeysCommand.Exit: return true;
                     case KeysCommand.Help: HelpPrints.PrintKeyshelp(); break;
-                    case KeysCommand.Import:
-                        //TODO: Implement import functionality
-                        /* NOTE: OLD CODE
-                         * bool ow = false || cmd.Contains("-overwrite");
-                         * cmd = cmd.Replace("import ", "").Replace(" -overwrite", "");
-                         * bool actionResult = ActionProcessor.Keys.PerformAction(cmd);
-                         * if (actionResult)
-                         *     ProcessLog(ProcessPrint.info, ActionProcessor.Keys.Pending + " changes pending");
-                         * else
-                         *     ProcessLog(ProcessPrint.error, "File not found");
-                         */
-                        break;
                     case KeysCommand.Invalid:
                         ProcessLog(ProcessPrint.Error, "Invalid command", true);
                         break;

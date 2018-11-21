@@ -172,7 +172,7 @@ namespace TrustAgent
         /// <param name="value">Value.</param>
         public static String GetTimestamp(DateTime value)
         {
-            return value.ToString("yyyyMMddHHmmssffff");
+            return value.ToString("yyyyMMddHHmm");
         }
 
         /// <summary>

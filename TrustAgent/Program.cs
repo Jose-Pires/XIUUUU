@@ -1,7 +1,7 @@
 ﻿/*
  * TrustAgent.Program.cs 
  * Developer: Pedro Cavaleiro
- * Developement stage: Development
+ * Developement stage: Completed
  * Tested on: macOS Mojave (10.14.1) -> PASSED
  * 
  * This class is the main program, handles the startup, and the events of the 
@@ -10,7 +10,7 @@
  * Requires initialization: NO
  * Contains:
  *     Class Level Constants: 1 Public
- *     Class Level Variables: 6 Private, 6 Public
+ *     Class Level Variables: 4 Private, 8 Public
  *     Methods:
  *         Static: 7 Public 
  * 
@@ -49,8 +49,8 @@ namespace TrustAgent
         public static bool enableSpy;
         static int serverPort = 12345;
 
-        static int dbSeed1;
-        static int dbSeed2;
+        public static int dbSeed1;
+        public static int dbSeed2;
         static string dbPath;
 
         static string commandPrompt;
@@ -191,6 +191,17 @@ namespace TrustAgent
                                        database.RetreiveEntityKey(clientHandler.Entity), 
                                        clientHandler.Socket);
                     break;
+                case Database.ValidationError.InvalidTime:
+                    ProcessDebugMessage("Packet time missmatch");
+                    ServerCommand sv_cmd_ts_missmatch = new ServerCommand
+                    {
+                        Command = ServerOperations.InvalidTime.Value
+                    };
+                    server.SendMessage(sv_cmd_ts_missmatch, 
+                                       PacketType.ClientMessage, 
+                                       database.RetreiveEntityKey(clientHandler.Entity), 
+                                       clientHandler.Socket);
+                    break;
             }
 
             if (enableDebug) {
@@ -215,6 +226,38 @@ namespace TrustAgent
                                PacketType.ServerCommand,
                                database.RetreiveEntityKey(clientHandler.Entity),
                                clientHandler.Socket);
+        }
+
+        /// <summary>
+        /// Begins the negotiation the the key between two entities
+        /// </summary>
+        /// <param name="clientHandler">Client handler.</param>
+        /// <param name="destEntity">Destination entity.</param>
+        static void NegotiateKey(ClientMessage message, ClientHandler clientHandler) {
+
+            string destEntity = message.Message.Split('|')[0];
+            string sourcePort = message.Message.Split('|')[1];
+            string key = message.Message.Split('|')[2];
+            string iv = message.Message.Split('|')[3];
+
+            byte[] unencryptedKey = DecryptData(Convert.FromBase64String(key), database.RetreiveEntityKey(clientHandler.Entity), Convert.FromBase64String(iv));
+            byte[] encryptedKey = EncryptData(unencryptedKey, database.RetreiveEntityKey(destEntity), Convert.FromBase64String(iv));
+
+            IPAddress ip = ((IPEndPoint)clientHandler.Socket.Client.RemoteEndPoint).Address;
+
+            string tmp_msg = string.Format("{0}|{1}:{2}|{3}|{4}", clientHandler.Entity, ip.ToString(), sourcePort, Convert.ToBase64String(encryptedKey), iv);
+
+            ClientHandler destClientHandler = (ClientHandler)server.clientHandlers[destEntity];
+            IPAddress destip = ((IPEndPoint)clientHandler.Socket.Client.RemoteEndPoint).Address;
+
+            ProcessDebugMessage(string.Format("Key negotiation between {0} ({1}) and {2} ({3}) has started", clientHandler.Entity, ip, destEntity, destip));
+
+            ClientMessage msg = new ClientMessage
+            {
+                Operation = ClientOperations.RequestKeyNegotiation.Value,
+                Message = tmp_msg
+            };
+            server.SendMessage(msg, PacketType.ClientMessage, database.RetreiveEntityKey(destEntity), destClientHandler.Socket);
         }
 
         /// <summary>
@@ -350,7 +393,8 @@ namespace TrustAgent
                     ProcessLog(ProcessPrint.Critical, "Server initialization stopped by user");
                     Environment.Exit(0);
                 }
-            }
+            } else
+                dbSeed1 = GenerateSeed();
         }
 
         /// <summary>
@@ -372,7 +416,8 @@ namespace TrustAgent
                     ProcessLog(ProcessPrint.Critical, "Server initialization stopped by user");
                     Environment.Exit(0);
                 }
-            }
+            } else
+                dbSeed2 = GenerateSeed();
         }
 
         #endregion

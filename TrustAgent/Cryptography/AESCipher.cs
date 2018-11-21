@@ -34,6 +34,7 @@ namespace TrustAgent
         {
             using (var aes = Aes.Create())
             {
+                aes.Mode = CipherMode.CBC;
                 using (var encryptor = aes.CreateEncryptor(key, iv))
                 {
                     using (var ms = new MemoryStream())
@@ -60,6 +61,7 @@ namespace TrustAgent
             {
                 using (var aes = Aes.Create())
                 {
+                    aes.Mode = CipherMode.CBC;
                     using (var decryptor = aes.CreateDecryptor(key, iv))
                     {
                         using (var ms = new MemoryStream())

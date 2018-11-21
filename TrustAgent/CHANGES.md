@@ -1,9 +1,11 @@
-﻿* Removed PacketType.ServerResponse
-* Added ServerOperations.ResponseSuccessEntities
-* Added ServerOperations.InvalidHMAC
-* Added EntityNoLongerAvailable
-* Removed unecessary variable declaration on ClientHandler catch (Line 76)
-* Upon received message, a verification is made to check if the packet is valid, if an error ocurrs the error is sent to the client otherwise we perform the next step, process the message to understand the operation requested
-* Verifies if the operation requested by the client is valid
-* Sends the Connected Entities List to the client
-* Added CHANGES.md to keep track of the changes made to the TrustAgent project
+﻿# TrustAgent Changes
+
+* Updated timestamp format
+* Updated packet validation to include the timestamp
+* Updated ClientMessage and ServerCommand models to include the timestamp
+* Key negotiation implemented
+* Implemented system information print
+* Forced AES cipher to use CBC mode
+* Removed keys -> import comand
+
+TrustAgent Released as 1.0.0RC1 b181121

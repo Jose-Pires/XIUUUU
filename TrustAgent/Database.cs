@@ -1,7 +1,7 @@
 ﻿/*
  * TrustAgent.Database.cs 
  * Developer: Pedro Cavaleiro
- * Developement stage: Development
+ * Developement stage: Completed
  * Tested on: macOS Mojave (10.14.1) -> PASSED
  * 
  * Manages the Trust Agent database
@@ -219,6 +219,11 @@ namespace TrustAgent
         /// <param name="packet">Packet.</param>
         public ValidationError ValidateEntity(ClientMessage packet, byte[] hmac, byte[] packetRaw)
         {
+            string ts = Helpers.GetTimestamp(DateTime.Now);
+
+            if (ts != packet.Timestamp)
+                return ValidationError.InvalidTime;
+
             byte[] key = GenKey(seed1, selector);
             byte[] iv = GenIV(seed2, selector);
 
@@ -243,7 +248,6 @@ namespace TrustAgent
                 EntityClass storedEntity = _entities.First(m => m.EntityName == packet.Entity);
                 byte[] calcHMAC = SHA256hmac.ComputeHMAC(packetRaw, storedEntity.Key);
                 return !SHA256hmac.CompareHMAC(hmac, calcHMAC) ? ValidationError.InvalidKey : ValidationError.NoError;
-                //return (Helpers.ByteArrayToString(hmac) == Helpers.ByteArrayToString(calcHMAC)) ? ValidationError.NoError : ValidationError.InvalidKey;
             }
             _entities = null;
             return ValidationError.NotFound;
@@ -293,7 +297,7 @@ namespace TrustAgent
         }
 
         public enum ValidationError {
-            NotFound, InvalidKey, NoError, AlreadyConnected
+            NotFound, InvalidKey, NoError, AlreadyConnected, InvalidTime
         }
 
         #endregion

@@ -1,7 +1,7 @@
 ﻿/*
  * TrustAgent.Server.cs 
  * Developer: Pedro Cavaleiro
- * Developement stage: Development
+ * Developement stage: Completed
  * Tested on: macOS Mojave (10.14.1) -> PASSED
  * 
  * This class handles all server related operations on the network level
