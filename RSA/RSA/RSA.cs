@@ -2,13 +2,21 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
+/*
+ * RSA.cs
+ * Developer: Pedro Batista
+ * Developement stage: Completed (awaiting testing)
+ * Tested on: pending
+ * 
+ */
+
 namespace RSA
 {
     public class RSA
     {
         private CspParameters Cp;
 
-        //! Caso não esteja a funcionar, mudar para public
+
         public List<byte[]> PublicKey { get; set; }
         public List<byte[]> PrivateKey { get; set; }
 
@@ -25,7 +33,12 @@ namespace RSA
             PrivateKey.Add(RSAKeyInfo.Modulus);
         }
 
-        // Encripta uma mensagem 
+        /// <summary>
+        /// Encripta uma mensagem 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="EntityPublicKey"></param>
+        /// <returns byte[]></returns>
         public byte[] Encrypt(byte[] message, List<byte[]> EntityPublicKey)
         {
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
@@ -39,7 +52,12 @@ namespace RSA
             return Rsa.Encrypt(message, true);
         }
 
-        // Encripta uma mensagem usando a nossa chave publica
+
+        /// <summary>
+        /// Encripta uma mensagem usando a nossa chave publica
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns byte[]></returns>
         public byte[] Encrypt(byte[] message)
         {
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
@@ -53,7 +71,11 @@ namespace RSA
             return Rsa.Encrypt(message, true);
         }
 
-        // Decifra uma mensagem
+        /// <summary>
+        /// Decifra uma mensagem
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns byte[]></returns>
         public byte[] Decrypt(byte[] message)
         {
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
@@ -67,7 +89,11 @@ namespace RSA
             return Rsa.Decrypt(message, true);
         }
 
-        // Adiciona uma entidade ao container
+        /// <summary>
+        /// Adiciona uma entidade ao container
+        /// </summary>
+        /// <param name="EtName"></param>
+        /// <param name="PublicKey"></param>
         public void AddEntintyPublicKey(string EtName, List<byte[]> PublicKey)
         {
             Cp = new CspParameters { KeyContainerName = EtName };
@@ -75,7 +101,11 @@ namespace RSA
             RSAParameters RSAKeyInfo = Rsa.ExportParameters(true);
         }
 
-        //Vai buscar a chave publica de uma entidade ao container
+        /// <summary>
+        /// Vai buscar a chave publica de uma entidade ao container
+        /// </summary>
+        /// <param name="EtName"></param>
+        /// <returns List<byte[]> ></returns>
         public List<byte[]> GetEntityPublicKey(string EtName)
         {
             List<byte[]> EnPublicKey = new List<byte[]>();
@@ -89,6 +119,10 @@ namespace RSA
             return EnPublicKey;
         }
 
+        /// <summary>
+        /// Apaga a key de uma entidade do container
+        /// </summary>
+        /// <param name="EtName"></param>
         public void DeleteKeyFromContainer(string EtName)
         {
             Cp = new CspParameters { KeyContainerName = EtName };
