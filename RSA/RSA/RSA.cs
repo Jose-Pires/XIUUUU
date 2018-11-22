@@ -5,8 +5,8 @@ using System.Security.Cryptography;
 /*
  * RSA.cs
  * Developer: Pedro Batista
- * Developement stage: Completed (awaiting testing)
- * Tested on: pending
+ * Developement stage: Encryption and Decryption a funcionar, falta fazer para mostrar chaves publicas e privadas
+ * Tested on: Windows 10 
  * 
  */
 
@@ -16,21 +16,16 @@ namespace RSA
     {
         private CspParameters Cp;
 
-
-        public List<byte[]> PublicKey { get; set; }
-        public List<byte[]> PrivateKey { get; set; }
+        public RSAParameters PublicKey { get; set; }
+        private RSAParameters PrivateKey { get; set; }
 
         public RSA(string EtName)
         {
             Cp = new CspParameters { KeyContainerName = EtName };
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
-            RSAParameters RSAKeyInfo = Rsa.ExportParameters(true);
 
-            PublicKey.Add(RSAKeyInfo.Exponent);
-            PublicKey.Add(RSAKeyInfo.Modulus);
-
-            PrivateKey.Add(RSAKeyInfo.D);
-            PrivateKey.Add(RSAKeyInfo.Modulus);
+            PublicKey = Rsa.ExportParameters(false);
+            PrivateKey = Rsa.ExportParameters(true);
         }
 
         /// <summary>
@@ -39,17 +34,13 @@ namespace RSA
         /// <param name="message"></param>
         /// <param name="EntityPublicKey"></param>
         /// <returns byte[]></returns>
-        public byte[] Encrypt(byte[] message, List<byte[]> EntityPublicKey)
+        public byte[] Encrypt(string message, string EtName)
         {
-            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
-            RSAParameters RSAKeyInfo = new RSAParameters
-            {
-                Exponent = EntityPublicKey[0],
-                Modulus = EntityPublicKey[1]
-            };
+            byte[] messageByte = Encoding.UTF8.GetBytes(message);
+            Cp = new CspParameters { KeyContainerName = EtName };
+            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
 
-            Rsa.ImportParameters(RSAKeyInfo);
-            return Rsa.Encrypt(message, true);
+            return Rsa.Encrypt(messageByte, true);
         }
 
 
@@ -58,17 +49,12 @@ namespace RSA
         /// </summary>
         /// <param name="message"></param>
         /// <returns byte[]></returns>
-        public byte[] Encrypt(byte[] message)
+        public byte[] Encrypt(string message)
         {
+            byte[] messageByte = Encoding.UTF8.GetBytes(message);
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
-            RSAParameters RSAKeyInfo = new RSAParameters
-            {
-                Exponent = PublicKey[0],
-                Modulus = PublicKey[1]
-            };
-
-            Rsa.ImportParameters(RSAKeyInfo);
-            return Rsa.Encrypt(message, true);
+            Rsa.ImportParameters(PublicKey);
+            return Rsa.Encrypt(messageByte, true);
         }
 
         /// <summary>
@@ -76,16 +62,13 @@ namespace RSA
         /// </summary>
         /// <param name="message"></param>
         /// <returns byte[]></returns>
-        public byte[] Decrypt(byte[] message)
+        public byte[] Decrypt(byte[] message, string EtName)
         {
-            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
-            RSAParameters RSAKeyInfo = new RSAParameters
-            {
-                D = PrivateKey[0],
-                Modulus = PrivateKey[1]
-            };
+            Cp = new CspParameters { KeyContainerName = EtName };
+            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
+            RSAParameters RSAKeyInfo = Rsa.ExportParameters(true);
 
-            Rsa.ImportParameters(RSAKeyInfo);
+            Rsa.ImportParameters(PrivateKey);
             return Rsa.Decrypt(message, true);
         }
 
@@ -94,30 +77,30 @@ namespace RSA
         /// </summary>
         /// <param name="EtName"></param>
         /// <param name="PublicKey"></param>
-        public void AddEntintyPublicKey(string EtName, List<byte[]> PublicKey)
+        public void AddEntintyPublicKey(string EtName, RSAParameters EtParameters)
         {
             Cp = new CspParameters { KeyContainerName = EtName };
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
-            RSAParameters RSAKeyInfo = Rsa.ExportParameters(true);
+            Rsa.ImportParameters(EtParameters);
         }
 
-        /// <summary>
-        /// Vai buscar a chave publica de uma entidade ao container
-        /// </summary>
-        /// <param name="EtName"></param>
-        /// <returns List<byte[]> ></returns>
-        public List<byte[]> GetEntityPublicKey(string EtName)
-        {
-            List<byte[]> EnPublicKey = new List<byte[]>();
-            Cp = new CspParameters { KeyContainerName = EtName };
-            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
-            RSAParameters RSAKeyInfo = Rsa.ExportParameters(false);
+        ///// <summary>
+        ///// Vai buscar a chave publica de uma entidade ao container
+        ///// </summary>
+        ///// <param name="EtName"></param>
+        ///// <returns List<byte[]> ></returns>
+        //public List<byte[]> GetEntityPublicKey(string EtName)
+        //{
+        //    List<byte[]> EnPublicKey = new List<byte[]>();
+        //    Cp = new CspParameters { KeyContainerName = EtName };
+        //    RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
+        //    RSAParameters RSAKeyInfo = Rsa.ExportParameters(false);
 
-            EnPublicKey.Add(RSAKeyInfo.Exponent);
-            EnPublicKey.Add(RSAKeyInfo.Modulus);
+        //    EnPublicKey.Add(RSAKeyInfo.Exponent);
+        //    EnPublicKey.Add(RSAKeyInfo.Modulus);
 
-            return EnPublicKey;
-        }
+        //    return EnPublicKey;
+        //}
 
         /// <summary>
         /// Apaga a key de uma entidade do container
