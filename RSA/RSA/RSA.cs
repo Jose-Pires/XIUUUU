@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Text;
+using System.IO;
+using System.Linq;
 
 /*
  * RSA.cs
@@ -14,15 +17,33 @@ namespace RSA
 {
     public class RSA
     {
-        private CspParameters Cp;
 
+        private CspParameters Cp;
+        private static string path = @"C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\Teste\Teste\RSAEntities.txt";
+
+        public List<string> EntidadesGuardadas { get; set; }
         public RSAParameters PublicKey { get; set; }
         private RSAParameters PrivateKey { get; set; }
 
         public RSA(string EtName)
         {
+
             Cp = new CspParameters { KeyContainerName = EtName };
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
+            EntidadesGuardadas = new List<string>();
+
+            //TODO Ver se existe maneira mais compacta de fazer isto
+            if (File.Exists(path))
+            {
+
+                string[] entidades = File.ReadAllLines(path);
+
+                foreach (string entidade in entidades)
+                {
+                    EntidadesGuardadas.Add(entidade);
+                }
+            }
+
 
             PublicKey = Rsa.ExportParameters(false);
             PrivateKey = Rsa.ExportParameters(true);
@@ -36,11 +57,19 @@ namespace RSA
         /// <returns byte[]></returns>
         public byte[] Encrypt(string message, string EtName)
         {
-            byte[] messageByte = Encoding.UTF8.GetBytes(message);
-            Cp = new CspParameters { KeyContainerName = EtName };
-            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
+            if (EntidadesGuardadas.Contains(EtName))
+            {
+                byte[] messageByte = Encoding.UTF8.GetBytes(message);
+                Cp = new CspParameters { KeyContainerName = EtName };
+                RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
 
-            return Rsa.Encrypt(messageByte, true);
+                return Rsa.Encrypt(messageByte, true);
+            }
+            else
+            {
+                Console.WriteLine("Não tens a chave publica da entidade " + EtName);
+                return null;
+            }
         }
 
 
@@ -82,25 +111,41 @@ namespace RSA
             Cp = new CspParameters { KeyContainerName = EtName };
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
             Rsa.ImportParameters(EtParameters);
+            if (!File.Exists(path))
+            {
+                File.WriteAllText(path, EtName);
+                EntidadesGuardadas.Add(EtName);
+            }
+            else if (File.Exists(path))
+            {
+                if (!EntidadesGuardadas.Contains(EtName))
+                {
+                    File.AppendAllText(path, EtName + "\n");
+                    EntidadesGuardadas.Add(EtName);
+                }
+            }
         }
 
-        ///// <summary>
-        ///// Vai buscar a chave publica de uma entidade ao container
-        ///// </summary>
-        ///// <param name="EtName"></param>
-        ///// <returns List<byte[]> ></returns>
-        //public List<byte[]> GetEntityPublicKey(string EtName)
-        //{
-        //    List<byte[]> EnPublicKey = new List<byte[]>();
-        //    Cp = new CspParameters { KeyContainerName = EtName };
-        //    RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
-        //    RSAParameters RSAKeyInfo = Rsa.ExportParameters(false);
-
-        //    EnPublicKey.Add(RSAKeyInfo.Exponent);
-        //    EnPublicKey.Add(RSAKeyInfo.Modulus);
-
-        //    return EnPublicKey;
-        //}
+        /// <summary>
+        /// vai buscar a chave publica de uma entidade ao container
+        /// </summary>
+        /// <param name="etname"></param>
+        /// <returns list<byte[]> ></returns>
+        public void ShowEntityPublicKey(string EtName)
+        {
+            if (EntidadesGuardadas.Contains(EtName))
+            {
+                Cp = new CspParameters { KeyContainerName = EtName };
+                RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
+                RSAParameters RSAKeyInfo = Rsa.ExportParameters(false);
+                Console.Write(EtName + " [ ");
+                foreach (byte number in RSAKeyInfo.Modulus)
+                {
+                    Console.Write(number + " ");
+                }
+                Console.Write(" ]\n");
+            }
+        }
 
         /// <summary>
         /// Apaga a key de uma entidade do container
@@ -108,11 +153,21 @@ namespace RSA
         /// <param name="EtName"></param>
         public void DeleteKeyFromContainer(string EtName)
         {
-            Cp = new CspParameters { KeyContainerName = EtName };
+            if (EntidadesGuardadas.Contains(EtName))
+            {
+                Cp = new CspParameters { KeyContainerName = EtName };
 
-            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
-            Rsa.PersistKeyInCsp = false;
-            Rsa.Clear();
+                RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp)
+                {
+                    PersistKeyInCsp = false
+                };
+                Rsa.Clear();
+                string[] Entidades = File.ReadAllLines(path);
+                File.Delete(path);
+                Entidades = Entidades.Where(val => val != EtName).ToArray();
+                File.WriteAllLines(path, Entidades);
+                EntidadesGuardadas = EntidadesGuardadas.Where(val => val != EtName).ToList();
+            }
         }
 
     }
