@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+    <StartAction>Project</StartAction>
+    <StartArguments>-debug -seed1 123123 -seed2 321321</StartArguments>
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+</Project>
