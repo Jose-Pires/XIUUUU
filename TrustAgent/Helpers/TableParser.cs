@@ -8,9 +8,6 @@
  * Creates an table and outputs it on the terminal properly formatted
  * 
  * Requires initialization: NO
- * Contains:
- *     Methods:
- *         Static: 1 Private, 3 Public
  * 
  */
 
