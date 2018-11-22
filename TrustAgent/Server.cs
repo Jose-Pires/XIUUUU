@@ -7,13 +7,6 @@
  * This class handles all server related operations on the network level
  * 
  * Requires initialization: YES
- * Contains:
- *     Class Level Variables: 2 Private, 4 Public
- *     Events: 2 Public
- *     Delegates: 2 Public
- *     Methods:
- *         Non Static: 3 Private, 6 Public
- *         Static: 3 Public 
  * 
  */
 
@@ -106,6 +99,11 @@ namespace TrustAgent
             if (clientSocket != null)
                 clientSocket.Close();
             serverSocket.Stop();
+        }
+
+        public void UserDisconnected(string entity) {
+            ((ClientHandler)clientHandlers[entity]).Disconnected();
+            clientHandlers.Remove(entity);
         }
 
         /// <summary>

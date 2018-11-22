@@ -1,7 +1,22 @@
-﻿using System;
+﻿/*
+ * TAClientLib.TAClient.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * This class is the one needed to the program interact with the TrustAgent Server
+ * All complex operations are handled by this Library and the program only needs
+ * to catch 8 exceptions, handle 3 events and call 3 methods
+ * 
+ * Requires initialization: YES
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+using System.Net;
+
+using static TAClientLib.AESCipher;
 
 namespace TAClientLib
 {
@@ -30,14 +45,17 @@ namespace TAClientLib
     {
         public event ServerCommandHandler Connected;
         public delegate void ServerCommandHandler();
+        public event ServerCommandHandler Disconnected;
         public event EntitiesListResponseHandler EntityListReceived;
-        public delegate void EntitiesListResponseHandler(EntityClass e);
+        public delegate void EntitiesListResponseHandler(List<(string, string)> e);
+        public event KeyNegotiationHandler KeyReceived;
+        public delegate void KeyNegotiationHandler(byte[] key, IPAddress remoteIP, int remotePORT);
 
         internal Client client;
         internal Client spy;
         internal byte[] firstPacket;
-        readonly byte[] key;
-        string entity;
+        internal readonly byte[] key;
+        internal string entity;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TAClientLib.TAClient"/> class.
@@ -64,6 +82,12 @@ namespace TAClientLib
             client.ConnectionFailed += Client_ConnectionFailed;
             client.InvalidHMAC += Client_InvalidHMAC;
             client.EntityListReceived += Client_EntityListReceived;
+            client.ClientKicked += Client_ClientKicked;
+            client.EntityNotFound += Client_EntityNotFound;
+            client.InvalidComand += Client_InvalidComand;
+            client.InvalidTime += Client_InvalidTime;
+            client.KeyReceived += Client_KeyReceived;
+            client.Disconnected += Client_Disconnected;
         }
 
         /// <summary>
@@ -84,8 +108,28 @@ namespace TAClientLib
             client.Connect(IP, Port, packet);
         }
 
+        /// <summary>
+        /// Initializes the key negotiation process
+        /// </summary>
+        /// <param name="entity">Entity.</param>
         public void RequestKey(string entity) {
 
+            int port = ((IPEndPoint)client.clientSocket.Client.LocalEndPoint).Port;
+
+            byte[] randKey = GenKey(Helpers.GenerateSeed(), 10);
+            byte[] randIV = GenIV(Helpers.GenerateSeed(), 20);
+            byte[] encryptedKey = EncryptData(randKey, key, randIV);
+
+            string tmp_msg = string.Format("{0}|{1}|{2}|{3}", entity, port.ToString(), Convert.ToBase64String(encryptedKey), Convert.ToBase64String(randIV));
+
+            ClientMessage msg = new ClientMessage
+            {
+                Entity = this.entity,
+                Operation = ClientOperations.RequestKeyNegotiation.Value,
+                Message = tmp_msg
+            };
+            byte[] packet = Client.BuildPacket(msg, key, PacketType.ClientMessage);
+            client.SendRequest(packet);
         }
 
         /// <summary>
@@ -104,13 +148,30 @@ namespace TAClientLib
             client.SendRequest(packet);
         }
 
-        void Client_EntityListReceived(EntityClass e)
-        {
-            EntityListReceived(e);
+        public void Disconnect() {
+            client.Disconnect();
         }
 
 
         #region "Client Connection Handlers"
+
+        /// <summary>
+        /// Handles the server disconnected notification
+        /// </summary>
+        /// <param name="e">E.</param>
+        void Client_Disconnected(ServerCommandEventArgs e)
+        {
+            Disconnected();
+        }
+
+        /// <summary>
+        /// Handles the entity list received event
+        /// </summary>
+        /// <param name="e">E.</param>
+        void Client_EntityListReceived(List<(string, string)> e)
+        {
+            EntityListReceived(e);
+        }
 
         /// <summary>
         /// Handles the connection success
@@ -126,6 +187,54 @@ namespace TAClientLib
                 spy.Connect(e.SpyIP, e.SpyPort, firstPacket);
             }
             Connected();
+        }
+
+        /// <summary>
+        /// Handles the key received from the key negitiation
+        /// </summary>
+        /// <param name="_key">Key.</param>
+        /// <param name="remoteIP">Remote ip.</param>
+        /// <param name="remotePORT">Remote port.</param>
+        void Client_KeyReceived(byte[] _key, IPAddress remoteIP, int remotePORT)
+        {
+            KeyReceived(_key, remoteIP, remotePORT);
+        }
+
+
+        /// <summary>
+        /// Invalid packet time to avoid hmac storing
+        /// </summary>
+        /// <param name="e">E.</param>
+        void Client_InvalidTime(ServerCommandEventArgs e)
+        {
+            throw new Exception("An error ocurred while matching the packet time");
+        }
+
+        /// <summary>
+        /// Handles entity no longer available
+        /// </summary>
+        /// <param name="e">E.</param>
+        void Client_EntityNotFound(ServerCommandEventArgs e)
+        {
+            throw new Exception("Entity no longer available");
+        }
+
+        /// <summary>
+        /// Handles an invalid comand
+        /// </summary>
+        /// <param name="e">E.</param>
+        void Client_InvalidComand(ServerCommandEventArgs e)
+        {
+            throw new Exception("Invalid comand");
+        }
+
+        /// <summary>
+        /// Handles the client kicked
+        /// </summary>
+        /// <param name="e">E.</param>
+        void Client_ClientKicked(ServerCommandEventArgs e)
+        {
+            throw new Exception("Client kicked");
         }
 
         /// <summary>

@@ -7,9 +7,6 @@
  * Contains multiple operations using SHA256 HMAC
  * 
  * Requires initialization: NO
- * Contains:
- *     Methods:
- *         Static: 2 Public
  * 
  */
 

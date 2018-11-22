@@ -8,12 +8,6 @@
  * server
  * 
  * Requires initialization: YES
- * Contains:
- *     Class Level Variables: 1 Private, 1 Private Read Only, 3 Public
- *     Delegates: 2 Public
- *     Events: 2 Public
- *     Methods:
- *         Non Static: 1 Private, 1 Public
  * 
  */
 
@@ -49,6 +43,9 @@ namespace TrustAgent
             thread.Start();
         }
 
+        /// <summary>
+        /// Starts listening for messages from the user
+        /// </summary>
         void StartListening()
         {
             int requestCount = 0;
@@ -64,20 +61,18 @@ namespace TrustAgent
                     NetworkStream stream = Socket.GetStream();
                     stream.Read(dataLength, 0, 4);
 
-                    byte[] packet = new byte[BitConverter.ToInt32(dataLength) + 4];
-                    stream.Read(packet, 0, BitConverter.ToInt32(dataLength) + 4);
+                    byte[] packet = new byte[BitConverter.ToInt32(dataLength)];
+                    stream.Read(packet, 0, BitConverter.ToInt32(dataLength));
 
-                    byte[] data = new byte[ BitConverter.ToInt32(dataLength)];
-                    Array.Copy(packet, 4, data, 0, BitConverter.ToInt32(dataLength));
+                    //byte[] data = new byte[ BitConverter.ToInt32(dataLength)];
+                    //Array.Copy(packet, 4, data, 0, BitConverter.ToInt32(dataLength));
 
-                    MessageReceived(this, data);
+                    MessageReceived(this, packet);
 
                 }
                 catch (Exception)
                 {
                     if (!stop) {
-                        //Connection Lost to the Client
-                        //Console.WriteLine(e);
                         ConnectionLost(this);
                         stop = true;
                     }
@@ -85,6 +80,18 @@ namespace TrustAgent
             }
         }
 
+        /// <summary>
+        /// Closes the socket 
+        /// </summary>
+        public void Disconnected() {
+            stop = true;
+            Socket.Close();
+            Socket.Dispose();
+        }
+
+        /// <summary>
+        /// Disconnects the user
+        /// </summary>
         public void Disconnect() {
             stop = true;
 

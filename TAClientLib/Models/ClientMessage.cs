@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*
+ * TAClientLib.ClientMessage.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Model for a client message
+ * 
+ * Requires initialization: YES
+ * 
+ */
+
+using System;
 namespace TAClientLib
 {
     public class ClientMessage

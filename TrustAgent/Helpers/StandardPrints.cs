@@ -8,14 +8,6 @@
  * This contains preset formatting and text coloring
  * 
  * Requires initialization: NO
- * Contains:
- *     Inner Classes: 1 Public (Static)
- *         Methods:
- *             Static: 3 Public 
- *     Class Level Variables: 1 Private
- *     Enums: 1 Public
- *     Methods:
- *         Static: 1 Public
  * 
  */
 

@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*
+ * TAClientLib.AESCipher.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Contains multiple operations using AES256
+ * 
+ * Requires initialization: NO
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
@@ -60,34 +72,6 @@ namespace TAClientLib
                 }
             }
             catch (Exception) { return null; }
-        }
-
-        /// <summary>
-        /// Verifies if the database can be decrypted, if it can not warns the user and deletes the file
-        /// </summary>
-        /// <returns><c>true</c>, if decryption was validated, <c>false</c> otherwise.</returns>
-        public static bool ValidateDecryption(byte[] entities, byte[] key,byte[] iv)
-        {
-            if (entities != null)
-            {
-                byte[] decripted = DecryptData(entities, key, iv);
-                if (decripted != null)
-                {
-                    try
-                    {
-                        List<EntityClass> _entities = Helpers.FromByteArray<List<EntityClass>>(decripted);
-                        _entities = null;
-                        decripted = null;
-                        return true;
-                    }
-                    catch (Exception)
-                    {
-                        return false;
-                    }
-                }
-                return false;
-            }
-            return false;
         }
 
         /// <summary>

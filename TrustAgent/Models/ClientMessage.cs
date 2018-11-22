@@ -6,9 +6,7 @@
  * 
  * Model for a client message
  * 
- * Requires initialization: NO
- * Contains:
- *     Getters/Setters: 3 Public (work as variables)
+ * Requires initialization: YES
  * 
  */
 

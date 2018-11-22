@@ -7,10 +7,6 @@
  * Sends data to the spy server
  * 
  * Requires initialization: YES
- * Contains:
- *     Class Level Variables: 2 Private, 1 Public
- *     Methods:
- *         Non Static: 1 Private, 1 Public
  * 
  */
 

@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*
+ * TAClientLib.Helpers.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Contains multiple helpers and extensions
+ * 
+ * Requires initialization: NO
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -157,7 +169,7 @@ namespace TAClientLib
         /// <param name="value">Value.</param>
         public static String GetTimestamp(DateTime value)
         {
-            return value.ToString("HHmmss");
+            return value.ToString("yyyyMMddHHmm");
         }
 
         /// <summary>

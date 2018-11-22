@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*
+ * TAClientLib..Hex.cs 
+ * Developer: Andrew Savinykh
+ * Source: https://codereview.stackexchange.com/q/145506
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Generates a string containing an hex dump of byte array
+ * 
+ * Requires initialization: YES
+ * 
+ */
+
 using System.Text;
 
 namespace TAClientLib

@@ -11,13 +11,6 @@
  * 4. Discarding changes
  * 
  * Requires initialization: NO
- * Contains:
- *     Inner Classes: 1 Public (Static)
- *         Class Level Variables: 1 Private
- *         Getters/Setters: 1 Public
- *         Enums: 1 Public
- *         Methods:
- *             Static: 5 Public
  * 
  */
 

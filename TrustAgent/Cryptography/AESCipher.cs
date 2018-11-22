@@ -7,9 +7,6 @@
  * Contains multiple operations using AES256
  * 
  * Requires initialization: NO
- * Contains:
- *     Methods:
- *         Static: 5 Public
  * 
  */
 

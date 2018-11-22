@@ -8,13 +8,6 @@
  * Generates a string containing an hex dump of byte array
  * 
  * Requires initialization: YES
- * Contains:
- *     Class Level Variables: 6 Private (Read Only), 1 Private
- *     Inner Classes: 1 Public
- *     Enums: 6 Private
- *     Methods:
- *         Static: 1 Public
- *         Non Static: 7 Private
  * 
  */
 

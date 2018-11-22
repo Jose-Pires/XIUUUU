@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*
+ * TAClientLib.PacketType.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * An enum simulator that can be converted to a int
+ * 
+ * Requires initialization: NO
+ * 
+ */
+
 namespace TAClientLib
 {
     public class PacketType

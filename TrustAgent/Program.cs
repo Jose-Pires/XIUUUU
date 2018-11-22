@@ -8,11 +8,6 @@
  * database, server and menuhandler
  * 
  * Requires initialization: NO
- * Contains:
- *     Class Level Constants: 1 Public
- *     Class Level Variables: 4 Private, 8 Public
- *     Methods:
- *         Static: 7 Public 
  * 
  */
 
@@ -157,6 +152,10 @@ namespace TrustAgent
                 case Database.ValidationError.NoError:
                     if (ClientOperations.RequestConnectedEntities.Value == message.Operation)
                         RequestedEntitiesList(clientHandler);
+                    else if (ClientOperations.Disconnect.Value == message.Operation)
+                        server.UserDisconnected(clientHandler.Entity);
+                    else if (ClientOperations.RequestKeyNegotiation.Value == message.Operation)
+                        NegotiateKey(message, clientHandler);
                     else {
                         ServerCommand sv_cmd_invalid_operation = new ServerCommand
                         {
@@ -287,7 +286,6 @@ namespace TrustAgent
             IPAddress local = ((IPEndPoint)socket.Client.LocalEndPoint).Address;
 
             PacketType packetType = Server.DecodePacketType(m);
-
             Server.DeconstructPacket(m, out byte[] hmac, out ClientMessage message, out byte[] raw);
 
             if (enableDebug)
@@ -311,6 +309,9 @@ namespace TrustAgent
                 case Database.ValidationError.NoError:
                     ProcessDebugMessage(string.Format("Connection from entity {0} ({1}) accepted!", message.Entity, ip));
                     server.AcceptClient(message.Entity, socket, database.RetreiveEntityKey(message.Entity), enableSpy, local.ToString());
+                    break;
+                case Database.ValidationError.InvalidTime:
+                    ProcessDebugMessage(string.Format("Connection from entity {0} ({1}) refused! Invalid time matching!", message.Entity, ip));
                     break;
             }
 

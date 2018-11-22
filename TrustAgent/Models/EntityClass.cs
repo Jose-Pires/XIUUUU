@@ -8,8 +8,6 @@
  * 
  * Requires initialization: NO
  * Serializable
- * Contains:
- *     Getters/Setters: 2 Public (work as variables)
  * 
  */
 

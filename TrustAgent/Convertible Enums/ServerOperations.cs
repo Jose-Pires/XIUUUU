@@ -7,16 +7,6 @@
  * An enum simulator that can be converted to a string
  * 
  * Requires initialization: NO
- * Contains:
- *     Classes: 2 Public
- *     Class "ServerOperations":
- *         Getters/Setters: 1 Public (work as variable)
- *         Methods:
- *             Static: 4 Public
- *     Class "ServerMessages":
- *         Getters/Setters: 1 Public (work as variable)
- *         Methods:
- *             Static: 3 Public
  * 
  */
 

@@ -7,9 +7,6 @@
  * Contains multiple helpers and extensions
  * 
  * Requires initialization: NO
- * Contains:
- *     Methods:
- *         Static: 12 Public
  * 
  */
 

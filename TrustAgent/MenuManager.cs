@@ -7,12 +7,6 @@
  * Operates the menus for the program
  * 
  * Requires initialization: YES
- * Contains:
- *     Class Level Variables: 1 Private (Read Only), 1 Public
- *     Inner Classes: 1 Public
- *     Enums: 6 Private
- *     Methods:
- *         Non Static: 5 Private
  * 
  */
 

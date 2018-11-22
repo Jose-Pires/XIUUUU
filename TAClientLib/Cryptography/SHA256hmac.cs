@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*
+ * TAClientLib.SHA256hmac.cs 
+ * Developer: Pedro Cavaleiro
+ * Developement stage: Completed
+ * Tested on: macOS Mojave (10.14.1) -> PASSED
+ * 
+ * Contains multiple operations using SHA256 HMAC
+ * 
+ * Requires initialization: NO
+ * 
+ */
+
 using System.Collections;
 using System.Security.Cryptography;
 

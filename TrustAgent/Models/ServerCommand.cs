@@ -6,9 +6,7 @@
  * 
  * Model for a server comand
  * 
- * Requires initialization: NO
- * Contains:
- *     Getters/Setters: 5 Public (work as variables)
+ * Requires initialization: YES
  * 
  */
 

@@ -7,11 +7,6 @@
  * Manages the Trust Agent database
  * 
  * Requires initialization: YES
- * Contains:
- *     Class Level Variables: 3 Private (Read Only), 3 Public
- *     Enums: 3 Public
- *     Methods:
- *         Non Static: 2 Private, 6 Public
  * 
  */
 
@@ -217,7 +212,7 @@ namespace TrustAgent
         /// </summary>
         /// <returns>The entity.</returns>
         /// <param name="packet">Packet.</param>
-        public ValidationError ValidateEntity(ClientMessage packet, byte[] hmac, byte[] packetRaw)
+        public ValidationError ValidateEntity(ClientMessage packet, byte[] hmac, byte[] packetRaw, bool ignoreConnected = false)
         {
             string ts = Helpers.GetTimestamp(DateTime.Now);
 
@@ -234,9 +229,9 @@ namespace TrustAgent
 
             if (!dbValidation)
                 return ValidationError.NotFound;
-
-            if (Program.server.clientHandlers.Contains(packet.Entity))
-                return ValidationError.AlreadyConnected;
+            if (ignoreConnected)
+                if (Program.server.clientHandlers.Contains(packet.Entity))
+                    return ValidationError.AlreadyConnected;
 
             byte[] decripted = DecryptData(entities, key, iv);
 

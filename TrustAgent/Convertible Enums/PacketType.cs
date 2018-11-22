@@ -7,10 +7,6 @@
  * An enum simulator that can be converted to a int
  * 
  * Requires initialization: NO
- * Contains:
- *     Getters/Setters: 1 Public (work as variable)
- *     Methods:
- *         Static: 3 Public
  * 
  */
 
