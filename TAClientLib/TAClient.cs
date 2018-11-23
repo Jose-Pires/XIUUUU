@@ -113,15 +113,13 @@ namespace TAClientLib
         /// Initializes the key negotiation process
         /// </summary>
         /// <param name="entity">Entity.</param>
-        public void RequestKey(string entity) {
-
-            int port = ((IPEndPoint)client.clientSocket.Client.LocalEndPoint).Port;
+        public void RequestKey(string entity, string waitingPort) {
 
             byte[] randKey = GenKey(Helpers.GenerateSeed(), 10);
             byte[] randIV = GenIV(Helpers.GenerateSeed(), 20);
             byte[] encryptedKey = EncryptData(randKey, key, randIV);
 
-            string tmp_msg = string.Format("{0}|{1}|{2}|{3}", entity, port.ToString(), Convert.ToBase64String(encryptedKey), Convert.ToBase64String(randIV));
+            string tmp_msg = string.Format("{0}|{1}|{2}|{3}", entity, waitingPort, Convert.ToBase64String(encryptedKey), Convert.ToBase64String(randIV));
 
             ClientMessage msg = new ClientMessage
             {
