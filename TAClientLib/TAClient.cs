@@ -242,8 +242,7 @@ namespace TAClientLib
         /// Handles the connection Rejected
         /// </summary>
         /// <param name="e">Event Arguments.</param>
-        /// <exception cref="ConnectionFailedException">Is thrown, no other code is executed
-        /// inside this exception there is an InnerException <see cref="ClientRejectedException"/>
+        /// <exception cref="ClientRejectedException">
         /// inside this exception there is an message with the following errors
         /// --> Invalid Key
         /// --> Entity not found
@@ -252,7 +251,7 @@ namespace TAClientLib
         /// </exception>
         void Client_Rejected(ServerCommandEventArgs e)
         {
-            throw new ConnectionFailedException("Client Rejected", new ClientRejectedException(e.Message));
+            throw new ClientRejectedException(e.Message);
         }
 
         /// <summary>
