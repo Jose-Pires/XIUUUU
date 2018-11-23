@@ -44,6 +44,7 @@ namespace TAClientLib
     public class TAClient
     {
         public event ServerCommandHandler Connected;
+        public event ServerCommandHandler Kicked;
         public delegate void ServerCommandHandler();
         public event ServerCommandHandler Disconnected;
         public event EntitiesListResponseHandler EntityListReceived;
@@ -216,7 +217,7 @@ namespace TAClientLib
         /// <param name="e">E.</param>
         void Client_EntityNotFound(ServerCommandEventArgs e)
         {
-            throw new Exception("Entity no longer available");
+            throw new ClientRejectedException("Entity no longer available");
         }
 
         /// <summary>
@@ -234,7 +235,7 @@ namespace TAClientLib
         /// <param name="e">E.</param>
         void Client_ClientKicked(ServerCommandEventArgs e)
         {
-            throw new Exception("Client kicked");
+            Kicked();
         }
 
         /// <summary>
@@ -271,7 +272,7 @@ namespace TAClientLib
         /// <param name="e">E.</param>
         void Client_InvalidHMAC(ServerCommandEventArgs e)
         {
-            throw new ConnectionFailedException("Failed to validate HMAC", new HMACFailedException("HMAC Validation failed", e.OriginalHMAC.FromByteArrayToHex(), e.ComputedHMAC.FromByteArrayToHex()));
+            throw new HMACFailedException("HMAC Validation failed", e.OriginalHMAC.FromByteArrayToHex(), e.ComputedHMAC.FromByteArrayToHex());
         }
 
         #endregion
