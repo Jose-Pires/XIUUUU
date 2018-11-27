@@ -8,7 +8,7 @@ using System.Linq;
 /*
  * RSA.cs
  * Developer: Pedro Batista
- * Developement stage: Encryption and Decryption a funcionar, falta fazer para mostrar chaves publicas e privadas
+ * Developement stage: Encryption and Decryption a funcionar
  * Tested on: Windows 10 
  * 
  */
@@ -17,17 +17,25 @@ namespace RSA
 {
     public class RSA
     {
+
+        // Usadas para cifrar os nomes guardados no ficheiro
         static readonly string PasswordHash = "P@@Sw0rd";
         static readonly string SaltKey = "S@LT&KEY";
         static readonly string VIKey = "@1B2c3D4e5F6g7H8";
 
+        // Container onde estão guardadas as keys
         private CspParameters Cp;
+
         private string Path { get; set; }
 
+        //Entidades ás quais a entidade tem acesso (chave publica)
         public List<string> EntidadesGuardadas { get; set; }
+
+
         public RSAParameters PublicKey { get; set; }
         private RSAParameters PrivateKey { get; set; }
 
+        #region Construtor
         public RSA(string EtName)
         {
 
@@ -35,13 +43,11 @@ namespace RSA
 
             Cp = new CspParameters { KeyContainerName = EtName };
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
-            EntidadesGuardadas = new List<string>();
-            EntidadesGuardadas.Add(EtName);
+            EntidadesGuardadas = new List<string>{EtName};
 
             //TODO Ver se existe maneira mais compacta de fazer isto
             if (File.Exists(Path))
             {
-
                 string[] entidades = File.ReadAllLines(Path);
 
                 foreach (string entidade in entidades)
@@ -53,15 +59,15 @@ namespace RSA
             PublicKey = Rsa.ExportParameters(false);
             PrivateKey = Rsa.ExportParameters(true);
 
-
         }
+        #endregion
 
         #region encrypt
         /// <summary>
-        /// Encripta uma mensagem 
+        /// Encripta uma mensagem usando uma chave publica
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="EntityPublicKey"></param>
+        /// <param name="EtName"></param>
         /// <returns byte[]></returns>
         public byte[] EncryptToByte(string message, string EtName = null)
         {
@@ -88,6 +94,12 @@ namespace RSA
             }
         }
 
+        /// <summary>
+        ///  Encripta uma mensagem usando uma chave publica
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="EtName"></param>
+        /// <returns byte[]></returns>
         public byte[] EncryptToByte(byte[] message, string EtName = null)
         {
             if (String.IsNullOrEmpty(EtName))
@@ -110,6 +122,12 @@ namespace RSA
             }
         }
 
+        /// <summary>
+        ///  Encripta uma mensagem usando uma chave publica
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="EtName"></param>
+        /// <returns string></returns>
         public string EncryptToString(string message, string EtName = null)
         {
             if (String.IsNullOrEmpty(EtName))
@@ -136,6 +154,12 @@ namespace RSA
             }
         }
 
+        /// <summary>
+        ///  Encripta uma mensagem usando uma chave publica
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="EtName"></param>
+        /// <returns string></returns>
         public string EncryptToString(byte[] message, string EtName = null)
         {
             if (String.IsNullOrEmpty(EtName))
@@ -162,7 +186,7 @@ namespace RSA
 
         #region decrypt
         /// <summary>
-        /// Decifra uma mensagem
+        /// Decifra uma mensagem usando a chave privada
         /// </summary>
         /// <param name="message"></param>
         /// <returns byte[]></returns>
@@ -173,6 +197,11 @@ namespace RSA
             return Rsa.Decrypt(message, true);
         }
 
+        /// <summary>
+        /// Decifra uma mensagem usando a chave privada
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns string></returns>
         public string DecryptToString(byte[] message)
         {
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
@@ -180,6 +209,11 @@ namespace RSA
             return Encoding.UTF8.GetString(Rsa.Decrypt(message, true));
         }
 
+        /// <summary>
+        /// Decifra uma mensagem usando a chave privada
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns byte[]></returns>
         public byte[] DecryptToByte(string message)
         {
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
@@ -187,6 +221,11 @@ namespace RSA
             return Rsa.Decrypt(Encoding.UTF8.GetBytes(message), true);
         }
 
+        /// <summary>
+        /// Decifra uma mensagem usando a chave privada
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns string></returns>
         public string DecryptToString(string message)
         {
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
@@ -219,6 +258,41 @@ namespace RSA
                 {
                     File.AppendAllText(Path, EncryptName(EtName) + "\n");
                     EntidadesGuardadas.Add(EtName);
+                }
+                else
+                {
+                    Console.WriteLine("Entidade já se encontra guardada");
+                }
+            }
+        }
+
+        public void AddEntintyPublicKey(string EtName, byte[] Exponent, byte[] Modulus)
+        {
+            Cp = new CspParameters { KeyContainerName = EtName };
+            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
+            RSAParameters aux = new RSAParameters
+            {
+                Exponent = Exponent,
+                Modulus = Modulus
+            };
+
+            Rsa.ImportParameters(aux);
+
+            if (!File.Exists(Path))
+            {
+                File.WriteAllText(Path, EncryptName(EtName) + "\n");
+                EntidadesGuardadas.Add(EtName);
+            }
+            else if (File.Exists(Path))
+            {
+                if (!EntidadesGuardadas.Contains(EtName))
+                {
+                    File.AppendAllText(Path, EncryptName(EtName) + "\n");
+                    EntidadesGuardadas.Add(EtName);
+                }
+                else
+                {
+                    Console.WriteLine("Entidade já se encontra guardada");
                 }
             }
         }
