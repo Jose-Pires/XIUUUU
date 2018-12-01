@@ -43,7 +43,7 @@ namespace RSA
 
             Cp = new CspParameters { KeyContainerName = EtName };
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
-            EntidadesGuardadas = new List<string>{EtName};
+            EntidadesGuardadas = new List<string> { EtName };
 
             //TODO Ver se existe maneira mais compacta de fazer isto
             if (File.Exists(Path))
@@ -92,6 +92,34 @@ namespace RSA
                 Console.WriteLine("Não tens a chave publica da entidade " + EtName);
                 return null;
             }
+        }
+
+        public byte[] EncryptToByte(string message, byte[] Exponent, byte[] Modulus)
+        {
+
+            byte[] messageByte = Encoding.UTF8.GetBytes(message);
+            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
+            RSAParameters parameters = new RSAParameters
+            {
+                Exponent = Exponent,
+                Modulus = Modulus
+            };
+            Rsa.ImportParameters(parameters);
+            return Rsa.Encrypt(messageByte, true);
+        }
+
+        public string EncryptToString(string message, byte[] Exponent, byte[] Modulus)
+        {
+
+            byte[] messageByte = Encoding.UTF8.GetBytes(message);
+            RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider();
+            RSAParameters parameters = new RSAParameters
+            {
+                Exponent = Exponent,
+                Modulus = Modulus
+            };
+            Rsa.ImportParameters(parameters);
+            return Convert.ToBase64String(Rsa.Encrypt(messageByte, true));
         }
 
         /// <summary>
@@ -309,7 +337,7 @@ namespace RSA
             {
                 while (true)
                 {
-                    Console.Write("\n1 - Numero\n2 - Texto\n");
+                    Console.Write("\n1 - Numero\n2 - Hex\n");
                     string escolha = Console.ReadLine();
 
                     if (escolha == "1")
@@ -366,13 +394,51 @@ namespace RSA
             RSAParameters RSAKeyInfo = Rsa.ExportParameters(false);
             Console.WriteLine("\n" + EtName + "\n");
             Console.WriteLine("Expoente :");
-            Console.Write(EtName + " [ " + Convert.ToBase64String(RSAKeyInfo.Exponent) + " ]\n");
+            Console.Write(EtName + " [ " + BitConverter.ToString(RSAKeyInfo.Exponent) + " ]\n");
             Console.WriteLine("Modulo :");
-            Console.Write(EtName + " [ " + Convert.ToBase64String(RSAKeyInfo.Modulus) + " ]\n");
+            Console.Write(EtName + " [ " + BitConverter.ToString(RSAKeyInfo.Modulus) + " ]\n");
         }
 
         #endregion
 
+        #region Mostrar Chave Privada
+        /// <summary>
+        /// vai buscar a chave publica de uma entidade ao container
+        /// </summary>
+        /// <param name="etname"></param>
+        public void ShowPrivateKey()
+        {
+            while (true)
+            {
+                Console.Write("\n1 - Numero\n2 - Hex\n");
+                string escolha = Console.ReadLine();
+
+                if (escolha == "1")
+                {
+                    Console.WriteLine("D :");
+
+                    Console.Write(" [ ");
+                    foreach (byte number in PrivateKey.D)
+                    {
+                        Console.Write(number + " ");
+                    }
+                    Console.Write(" ]\n");
+                    break;
+                }
+                else if (escolha == "2")
+                {
+                    Console.WriteLine("D :");
+                    Console.Write(" [ " + BitConverter.ToString(PrivateKey.D) + " ]\n");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Comando errado");
+                }
+            }
+        }
+        #endregion
+        #region Apagar Do Container
         /// <summary>
         /// Apaga a key de uma entidade do container
         /// </summary>
@@ -395,6 +461,7 @@ namespace RSA
                 EntidadesGuardadas = EntidadesGuardadas.Where(val => val != EtName).ToList();
             }
         }
+        #endregion
 
         #region EncriptarNomes
         public static string EncryptName(string plainText)
