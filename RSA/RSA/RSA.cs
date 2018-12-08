@@ -43,13 +43,14 @@ namespace RSA
 
             Cp = new CspParameters { KeyContainerName = EtName };
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
-            EntidadesGuardadas = new List<string> { EtName };
+            EntidadesGuardadas = new List<string> ();
 
             //TODO Ver se existe maneira mais compacta de fazer isto
             if (File.Exists(Path))
             {
                 string[] entidades = File.ReadAllLines(Path);
 
+                //EntidadesGuardadas.AddRange(entidades.ToList());
                 foreach (string entidade in entidades)
                 {
                     EntidadesGuardadas.Add(DecryptName(entidade));
@@ -459,6 +460,14 @@ namespace RSA
                 Entidades = Entidades.Where(val => DecryptName(val) != EtName).ToArray();
                 File.WriteAllLines(Path, Entidades);
                 EntidadesGuardadas = EntidadesGuardadas.Where(val => val != EtName).ToList();
+            }
+        }
+
+        public void DeleteAllFromContainer()
+        {
+            foreach (string Entidade in EntidadesGuardadas)
+            {
+                DeleteKeyFromContainer(Entidade);
             }
         }
         #endregion
