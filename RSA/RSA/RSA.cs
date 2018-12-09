@@ -120,7 +120,7 @@ namespace RSA
                 Modulus = Modulus
             };
             Rsa.ImportParameters(parameters);
-            return Convert.ToBase64String(Rsa.Encrypt(messageByte, true));
+            return Encoding.UTF8.GetString(Rsa.Encrypt(messageByte, true));
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace RSA
                 Cp = new CspParameters { KeyContainerName = EtName };
                 RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
 
-                return Convert.ToBase64String(Rsa.Encrypt(messageByte, true));
+                return Encoding.UTF8.GetString(Rsa.Encrypt(messageByte, true));
             }
             else
             {
@@ -203,7 +203,7 @@ namespace RSA
                 Cp = new CspParameters { KeyContainerName = EtName };
                 RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
 
-                return Convert.ToBase64String(Rsa.Encrypt(message, true));
+                return Encoding.UTF8.GetString(Rsa.Encrypt(message, true));
             }
             else
             {
