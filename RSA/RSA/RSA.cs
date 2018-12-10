@@ -9,6 +9,7 @@ using System.Linq;
  * RSA.cs
  * Developer: Pedro Batista
  * Developement stage: Encryption and Decryption a funcionar
+ * TODO: Adaptar para Client Server
  * Tested on: Windows 10 
  * 
  */
