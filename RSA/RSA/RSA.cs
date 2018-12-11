@@ -40,23 +40,24 @@ namespace RSA
         public RSA(string EtName)
         {
 
-            Path = EtName + "RSAEntities.txt";
+            //Path = EtName + "RSAEntities.txt";
 
             Cp = new CspParameters { KeyContainerName = EtName };
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
             EntidadesGuardadas = new List<string> ();
+            EntidadesGuardadas.Add(EtName);
 
-            //TODO Ver se existe maneira mais compacta de fazer isto
-            if (File.Exists(Path))
-            {
-                string[] entidades = File.ReadAllLines(Path);
+            //TODO Caso seja necessário files
+            //if (File.Exists(Path))
+            //{
+            //    string[] entidades = File.ReadAllLines(Path);
 
-                //EntidadesGuardadas.AddRange(entidades.ToList());
-                foreach (string entidade in entidades)
-                {
-                    EntidadesGuardadas.Add(DecryptName(entidade));
-                }
-            }
+            //    //EntidadesGuardadas.AddRange(entidades.ToList());
+            //    foreach (string entidade in entidades)
+            //    {
+            //        EntidadesGuardadas.Add(DecryptName(entidade));
+            //    }
+            //}
 
             PublicKey = Rsa.ExportParameters(false);
             PrivateKey = Rsa.ExportParameters(true);
@@ -277,23 +278,28 @@ namespace RSA
             RSACryptoServiceProvider Rsa = new RSACryptoServiceProvider(Cp);
             Rsa.ImportParameters(EtParameters);
 
-            if (!File.Exists(Path))
+            if (!EntidadesGuardadas.Contains(EtName))
             {
-                File.WriteAllText(Path, EncryptName(EtName) + "\n");
                 EntidadesGuardadas.Add(EtName);
             }
-            else if (File.Exists(Path))
-            {
-                if (!EntidadesGuardadas.Contains(EtName))
-                {
-                    File.AppendAllText(Path, EncryptName(EtName) + "\n");
-                    EntidadesGuardadas.Add(EtName);
-                }
-                else
-                {
-                    Console.WriteLine("Entidade já se encontra guardada");
-                }
-            }
+
+            //if (!File.Exists(Path))
+            //{
+            //    File.WriteAllText(Path, EncryptName(EtName) + "\n");
+            //    EntidadesGuardadas.Add(EtName);
+            //}
+            //else if (File.Exists(Path))
+            //{
+            //    if (!EntidadesGuardadas.Contains(EtName))
+            //    {
+            //        File.AppendAllText(Path, EncryptName(EtName) + "\n");
+            //        EntidadesGuardadas.Add(EtName);
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("Entidade já se encontra guardada");
+            //    }
+            //}
         }
 
         public void AddEntintyPublicKey(string EtName, byte[] Exponent, byte[] Modulus)
@@ -308,23 +314,28 @@ namespace RSA
 
             Rsa.ImportParameters(aux);
 
-            if (!File.Exists(Path))
+            if (!EntidadesGuardadas.Contains(EtName))
             {
-                File.WriteAllText(Path, EncryptName(EtName) + "\n");
                 EntidadesGuardadas.Add(EtName);
             }
-            else if (File.Exists(Path))
-            {
-                if (!EntidadesGuardadas.Contains(EtName))
-                {
-                    File.AppendAllText(Path, EncryptName(EtName) + "\n");
-                    EntidadesGuardadas.Add(EtName);
-                }
-                else
-                {
-                    Console.WriteLine("Entidade já se encontra guardada");
-                }
-            }
+
+            //if (!File.Exists(Path))
+            //{
+            //    File.WriteAllText(Path, EncryptName(EtName) + "\n");
+            //    EntidadesGuardadas.Add(EtName);
+            //}
+            //else if (File.Exists(Path))
+            //{
+            //    if (!EntidadesGuardadas.Contains(EtName))
+            //    {
+            //        File.AppendAllText(Path, EncryptName(EtName) + "\n");
+            //        EntidadesGuardadas.Add(EtName);
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("Entidade já se encontra guardada");
+            //    }
+            //}
         }
         #endregion
 
@@ -456,10 +467,12 @@ namespace RSA
                     PersistKeyInCsp = false
                 };
                 Rsa.Clear();
-                string[] Entidades = File.ReadAllLines(Path);
-                File.Delete(Path);
-                Entidades = Entidades.Where(val => DecryptName(val) != EtName).ToArray();
-                File.WriteAllLines(Path, Entidades);
+
+                //Caso seja necessário usar ficheiros
+                //string[] Entidades = File.ReadAllLines(Path);
+                //File.Delete(Path);
+                //Entidades = Entidades.Where(val => DecryptName(val) != EtName).ToArray();
+                //File.WriteAllLines(Path, Entidades);
                 EntidadesGuardadas = EntidadesGuardadas.Where(val => val != EtName).ToList();
             }
         }
