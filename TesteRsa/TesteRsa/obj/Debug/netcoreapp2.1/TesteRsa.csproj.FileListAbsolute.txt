@@ -1,0 +1,11 @@
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\obj\Debug\netcoreapp2.1\TesteRsa.csprojAssemblyReference.cache
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\obj\Debug\netcoreapp2.1\TesteRsa.csproj.CoreCompileInputs.cache
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\obj\Debug\netcoreapp2.1\TesteRsa.AssemblyInfoInputs.cache
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\obj\Debug\netcoreapp2.1\TesteRsa.AssemblyInfo.cs
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\bin\Debug\netcoreapp2.1\TesteRsa.deps.json
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\bin\Debug\netcoreapp2.1\TesteRsa.runtimeconfig.json
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\bin\Debug\netcoreapp2.1\TesteRsa.runtimeconfig.dev.json
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\bin\Debug\netcoreapp2.1\TesteRsa.dll
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\bin\Debug\netcoreapp2.1\TesteRsa.pdb
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\obj\Debug\netcoreapp2.1\TesteRsa.dll
+C:\Users\batpe\Desktop\SI\Projeto\XIUUUU\TesteRsa\TesteRsa\obj\Debug\netcoreapp2.1\TesteRsa.pdb
