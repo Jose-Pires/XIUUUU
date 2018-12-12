@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -32,6 +32,8 @@ namespace XIUNetworkingLib
         public delegate void NetworkingEvent(ClientEventArgs e);
         public NetworkingEvent Connected;
         public InfoEvent NewUser;
+        public SVMessageEvent ConnectionLost;
+        public MessageEvent CLConnectionLost;
         public delegate void MessageEvent(byte[] data, ClientInstance instance, ClientEventArgs e);
         public delegate void SVMessageEvent(byte[] data, ClientHandler instance, ClientEventArgs e);
         public delegate void InfoEvent(string message);
@@ -51,6 +53,12 @@ namespace XIUNetworkingLib
             server = new Server(ips.First(), svPort, Entity);
             server.ClientConnected += Server_ClientConnected;
             server.MessageReceived += Server_MessageReceived;
+            server.ConnectionLost += Server_ConnectionLost;
+        }
+
+        private void Server_ConnectionLost(byte[] m, ClientHandler clientHandler, ClientEventArgs e)
+        {
+            ConnectionLost(null, clientHandler, e);
         }
 
         public void InitializeConnection(string ip, int port, string entity) {
@@ -72,6 +80,7 @@ namespace XIUNetworkingLib
             if (cmd == "connected") {
                 // Connection was accepted.
                 instance.MessageReceived += Instance_MessageReceived;
+                instance.ConnectionLost += Instance_ConnectionLost;
                 ClientInstances.Add(new ClientInstance
                 {
                     ClientNetworking = instance,
@@ -80,6 +89,11 @@ namespace XIUNetworkingLib
                 Connected(e);
             } else
                 throw new Exception("An error ocurred: " + strData.Split('_')[0]);
+        }
+        
+        void Instance_ConnectionLost(Client instance, ClientEventArgs e) 
+        {
+            CLMessageReceived(null, ClientInstances.First(m => m.ClientNetworking == instance), null);
         }
 
         void Instance_MessageReceived(Client instance, ClientEventArgs e)
