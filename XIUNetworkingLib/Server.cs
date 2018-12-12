@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -28,6 +28,7 @@ namespace XIUNetworkingLib
         #region "Events"
 
         public event ClientCommunicationHandler MessageReceived;
+        public event ClientCommunicationHandler ConnectionLost;
         public event ClientConnectionHandler ClientConnected;
 
         #endregion
@@ -171,8 +172,13 @@ namespace XIUNetworkingLib
             SendMessage(accptedMessage, socket);
             ClientHandler client = new ClientHandler(entity, socket);
             client.MessageReceived += Client_MessageReceived;
-
+            client.ConnectionLost += Client_ConnectionLost;
             clientHandlers.Add(entity, client);
+        }
+
+        private void Client_ConnectionLost(ClientHandler instance, ClientEventArgs e)
+        {
+            ConnectionLost(null, instance, e);
         }
 
         void SendMessage(byte[] packet, TcpClient socket)
