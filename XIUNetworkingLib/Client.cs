@@ -88,6 +88,7 @@ namespace XIUNetworkingLib
         public event ClientEvent MessageReceived;
         public event ClientEvent ConnectionFailed;
         public event ClientEvent Connected;
+        public event ClientEvent ConnectionLost;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ClientLib.Client"/> class.
@@ -147,90 +148,93 @@ namespace XIUNetworkingLib
         {
             while (IsListening)
             {
+                try {
+                    serverStream = clientSocket.GetStream();
 
-                serverStream = clientSocket.GetStream();
+                    byte[] dataLength = new byte[4];
+                    serverStream.Read(dataLength, 0, 4);
+                    int dLength = BitConverter.ToInt32(dataLength, 0);
 
-                byte[] dataLength = new byte[4];
-                serverStream.Read(dataLength, 0, 4);
-                int dLength = BitConverter.ToInt32(dataLength, 0);
+                    byte[] packetType = new byte[2];
+                    serverStream.Read(packetType, 0, 2);
+                    Int16 pType = BitConverter.ToInt16(packetType, 0);
 
-                byte[] packetType = new byte[2];
-                serverStream.Read(packetType, 0, 2);
-                Int16 pType = BitConverter.ToInt16(packetType, 0);
+                    byte[] isEnc = new byte[1];
+                    serverStream.Read(isEnc, 0, 1);
+                    bool isEncrypted = isEnc[0] != 0b0;
 
-                byte[] isEnc = new byte[1];
-                serverStream.Read(isEnc, 0, 1);
-                bool isEncrypted = isEnc[0] != 0b0;
+                    byte[] hasMac = new byte[1];
+                    serverStream.Read(hasMac, 0, 1);
+                    bool hasMessageAuth = isEnc[0] != 0b0;
 
-                byte[] hasMac = new byte[1];
-                serverStream.Read(hasMac, 0, 1);
-                bool hasMessageAuth = isEnc[0] != 0b0;
+                    Int16 cipherAlgorithm = 0;
+                    byte[] cipherIV = null;
+                    if (isEncrypted) {
+                        byte[] ciptherAlgo = new byte[2];
+                        serverStream.Read(ciptherAlgo, 0, 2);
+                        cipherAlgorithm = BitConverter.ToInt16(ciptherAlgo, 0);
 
-                Int16 cipherAlgorithm = 0;
-                byte[] cipherIV = null;
-                if (isEncrypted) {
-                    byte[] ciptherAlgo = new byte[2];
-                    serverStream.Read(ciptherAlgo, 0, 2);
-                    cipherAlgorithm = BitConverter.ToInt16(ciptherAlgo, 0);
+                        byte[] cipherIvSize = new byte[4];
+                        serverStream.Read(cipherIvSize, 0, 4);
+                        cipherIV = new byte[BitConverter.ToInt32(cipherIvSize, 0)];
+                        serverStream.Read(cipherIV, 0, BitConverter.ToInt32(cipherIvSize, 0));
 
-                    byte[] cipherIvSize = new byte[4];
-                    serverStream.Read(cipherIvSize, 0, 4);
-                    cipherIV = new byte[BitConverter.ToInt32(cipherIvSize, 0)];
-                    serverStream.Read(cipherIV, 0, BitConverter.ToInt32(cipherIvSize, 0));
-
-                }
-
-                CipherAlgo cAlgo = CipherAlgo.NOALGO;
-                if (isEncrypted)
-                {
-                    switch (cipherAlgorithm)
-                    {
-                        case 0:
-                            cAlgo = CipherAlgo.AES256;
-                            break;
                     }
-                }
 
-
-                Int16 macAlgorithm = 0;
-                byte[] msgMac = null;
-                if (hasMessageAuth)
-                {
-                    byte[] macAlgo = new byte[2];
-                    serverStream.Read(macAlgo, 0, 2);
-                    macAlgorithm = BitConverter.ToInt16(macAlgo, 0);
-
-                    byte[] macSize = new byte[4];
-                    serverStream.Read(macSize, 0, 4);
-                    msgMac = new byte[BitConverter.ToInt32(macSize, 0)];
-                    serverStream.Read(msgMac, 0, BitConverter.ToInt32(macSize, 0));
-
-                }
-
-                MessageAuthAlgo algo = MessageAuthAlgo.NOALGO;
-                if (hasMessageAuth)
-                {
-                    switch (macAlgorithm)
+                    CipherAlgo cAlgo = CipherAlgo.NOALGO;
+                    if (isEncrypted)
                     {
-                        case 0:
-                            algo = MessageAuthAlgo.HMACSHA256;
-                            break;
+                        switch (cipherAlgorithm)
+                        {
+                            case 0:
+                                cAlgo = CipherAlgo.AES256;
+                                break;
+                        }
                     }
+
+
+                    Int16 macAlgorithm = 0;
+                    byte[] msgMac = null;
+                    if (hasMessageAuth)
+                    {
+                        byte[] macAlgo = new byte[2];
+                        serverStream.Read(macAlgo, 0, 2);
+                        macAlgorithm = BitConverter.ToInt16(macAlgo, 0);
+
+                        byte[] macSize = new byte[4];
+                        serverStream.Read(macSize, 0, 4);
+                        msgMac = new byte[BitConverter.ToInt32(macSize, 0)];
+                        serverStream.Read(msgMac, 0, BitConverter.ToInt32(macSize, 0));
+
+                    }
+
+                    MessageAuthAlgo algo = MessageAuthAlgo.NOALGO;
+                    if (hasMessageAuth)
+                    {
+                        switch (macAlgorithm)
+                        {
+                            case 0:
+                                algo = MessageAuthAlgo.HMACSHA256;
+                                break;
+                        }
+                    }
+
+
+
+                    byte[] data = new byte[dLength];
+                    serverStream.Read(data, 0, dLength);
+
+
+                    ClientEventArgs e = new ClientEventArgs(pType, isEncrypted, hasMessageAuth, cAlgo, cipherIV, algo, msgMac, data);
+
+                    if (pType == -1234)
+                        Connected(this, e);
+                    else
+                        MessageReceived(this, e);
                 }
-
-
-
-                byte[] data = new byte[dLength];
-                serverStream.Read(data, 0, dLength);
-
-
-                ClientEventArgs e = new ClientEventArgs(pType, isEncrypted, hasMessageAuth, cAlgo, cipherIV, algo, msgMac, data);
-
-                if (pType == -1234)
-                    Connected(this, e);
-                else
-                    MessageReceived(this, e);
-
+                catch (Exception) {
+                    ConnectionLost(this, null);
+                }
             }
         }
 
