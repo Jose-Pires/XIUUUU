@@ -93,7 +93,7 @@ namespace XIUNetworkingLib
         
         void Instance_ConnectionLost(Client instance, ClientEventArgs e) 
         {
-            CLMessageReceived(null, ClientInstances.First(m => m.ClientNetworking == instance), null);
+            CLConnectionLost(null, ClientInstances.First(m => m.ClientNetworking == instance), null);
         }
 
         void Instance_MessageReceived(Client instance, ClientEventArgs e)
