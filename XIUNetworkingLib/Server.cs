@@ -168,7 +168,7 @@ namespace XIUNetworkingLib
 
         public void AcceptClient(string entity, TcpClient socket)
         {
-            byte[] accptedMessage = Client.BuildPacket(Encoding.ASCII.GetBytes("connected_" + entity), type: -1234);
+            byte[] accptedMessage = Client.BuildPacket(Encoding.ASCII.GetBytes("connected_" + Entity), type: -1234);
             SendMessage(accptedMessage, socket);
             ClientHandler client = new ClientHandler(entity, socket);
             client.MessageReceived += Client_MessageReceived;
