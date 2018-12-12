@@ -86,6 +86,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MerklePuzzlesLib\MerklePuzzlesLib.csproj">
+      <Project>{d1af57b2-9094-4c10-beb3-8889052042ef}</Project>
+      <Name>MerklePuzzlesLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PreSharedKeysLib\PreSharedKeysLib.csproj">
+      <Project>{7f30f767-f4ba-428f-b6c4-a8296650e521}</Project>
+      <Name>PreSharedKeysLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RSALib\RSALib.csproj">
       <Project>{6775ff6e-6f7c-46a7-90e0-72197dba44bb}</Project>
       <Name>RSALib</Name>

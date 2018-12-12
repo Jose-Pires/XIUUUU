@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Text;
 using RSALib;
+using MerklePuzzlesLib;
 using System.Linq;
 namespace SiUi
 {
@@ -13,6 +14,7 @@ namespace SiUi
         int PortUser;
         string Username;
         RSAlib myRsa;
+        Puzzles myPuzzle;
 
         public Form1()
         {
@@ -112,6 +114,38 @@ namespace SiUi
         private void tabRsa_Click(object sender, EventArgs e)
         {
 
+        }
+
+        
+
+        private void btnGerar_Click(object sender, EventArgs e)
+        {
+            myPuzzle = new Puzzles();
+            myPuzzle.GerarListaDeMensagens();
+            myPuzzle.GerarListaDeChaves();
+            
+            foreach (var mensagem in myPuzzle.listaMes)
+            {
+                lvMyPuzzles.Items.Add(Encoding.UTF8.GetString(mensagem));
+            }
+        }
+        #region HelpButtons
+        private void btnHelpInicialização_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("-Defina a sua porta e nome, que serão usados para se conectar ao servidor");
+        }
+
+        private void btnHelpConexão_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("-Defina a porta e o IP do utilizador ao qual se deseja conectar;");
+        }
+
+
+        #endregion
+
+        private void btnHelpRsaEnivar_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("-Escolher a entidade pretendida\n-Escrever a sua mensagem\n-Ao clicar em enviar será enviada a mensagem cifrada usando a chave pública da entidade escolhida");
         }
     }
 }
