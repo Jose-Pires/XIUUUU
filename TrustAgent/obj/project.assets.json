@@ -827,11 +827,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/pedrocavaleiro/Projects/XIUUUU/TrustAgent/TrustAgent.csproj",
+      "projectUniqueName": "/Users/pedrocavaleiro/Documents/GitHub/XIUUUU/TrustAgent/TrustAgent.csproj",
       "projectName": "TrustAgent",
-      "projectPath": "/Users/pedrocavaleiro/Projects/XIUUUU/TrustAgent/TrustAgent.csproj",
+      "projectPath": "/Users/pedrocavaleiro/Documents/GitHub/XIUUUU/TrustAgent/TrustAgent.csproj",
       "packagesPath": "/Users/pedrocavaleiro/.nuget/packages/",
-      "outputPath": "/Users/pedrocavaleiro/Projects/XIUUUU/TrustAgent/obj",
+      "outputPath": "/Users/pedrocavaleiro/Documents/GitHub/XIUUUU/TrustAgent/obj",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
@@ -859,19 +859,19 @@
     "frameworks": {
       "netcoreapp2.1": {
         "dependencies": {
-          "System.Text.Encoding.CodePages": {
-            "target": "Package",
-            "version": "4.5.0"
-          },
-          "Newtonsoft.Json": {
-            "target": "Package",
-            "version": "11.0.2"
-          },
           "Microsoft.NETCore.App": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "2.1.0",
+            "version": "[2.1.0, )",
             "autoReferenced": true
+          },
+          "Newtonsoft.Json": {
+            "target": "Package",
+            "version": "[11.0.2, )"
+          },
+          "System.Text.Encoding.CodePages": {
+            "target": "Package",
+            "version": "[4.5.0, )"
           }
         },
         "imports": [
