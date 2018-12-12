@@ -233,6 +233,7 @@ namespace XIUNetworkingLib
                         MessageReceived(this, e);
                 }
                 catch (Exception) {
+                    IsListening = false;
                     ConnectionLost(this, null);
                 }
             }
