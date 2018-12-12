@@ -1,0 +1,9 @@
+/Users/pedrocavaleiro/Projects/RSALib/bin/Debug/netstandard2.0/RSALib.deps.json
+/Users/pedrocavaleiro/Projects/RSALib/bin/Debug/netstandard2.0/RSALib.dll
+/Users/pedrocavaleiro/Projects/RSALib/bin/Debug/netstandard2.0/RSALib.pdb
+/Users/pedrocavaleiro/Projects/RSALib/obj/Debug/netstandard2.0/RSALib.csprojAssemblyReference.cache
+/Users/pedrocavaleiro/Projects/RSALib/obj/Debug/netstandard2.0/RSALib.csproj.CoreCompileInputs.cache
+/Users/pedrocavaleiro/Projects/RSALib/obj/Debug/netstandard2.0/RSALib.AssemblyInfoInputs.cache
+/Users/pedrocavaleiro/Projects/RSALib/obj/Debug/netstandard2.0/RSALib.AssemblyInfo.cs
+/Users/pedrocavaleiro/Projects/RSALib/obj/Debug/netstandard2.0/RSALib.dll
+/Users/pedrocavaleiro/Projects/RSALib/obj/Debug/netstandard2.0/RSALib.pdb
