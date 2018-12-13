@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using TAClientLib;
 using System.Numerics;
 using DiffieHellmanLib;
+using PBKDF2Lib;
 
 namespace SiUi
 {
@@ -824,6 +825,23 @@ namespace SiUi
             }
         }
 
-        
+        private void label35_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPBKDF2_Click(object sender, EventArgs e)
+        {
+            string Password = txtPbkPassw.Text;
+            string Iterations = txtIterations.Text;
+            string Size = txtSize.Text;
+            int SaltSize = int.Parse(txtSaltSize.Text);
+
+
+            byte[] Salt = PBKDF2.GerarSal(SaltSize);
+            byte[] Cifer = PBKDF2.Derivar(PBKDF2.StringToByte(Password), Salt, int.Parse(Iterations), int.Parse(Size));
+            txtPbkCifra.Text = Encoding.ASCII.GetString(Cifer);
+
+        }
     }
 }

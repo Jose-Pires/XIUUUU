@@ -155,8 +155,21 @@
             this.label26 = new System.Windows.Forms.Label();
             this.txtDHG = new System.Windows.Forms.TextBox();
             this.label27 = new System.Windows.Forms.Label();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.txtPbkCifra = new System.Windows.Forms.TextBox();
+            this.btnPBKDF2 = new System.Windows.Forms.Button();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.label35 = new System.Windows.Forms.Label();
+            this.label34 = new System.Windows.Forms.Label();
+            this.txtSize = new System.Windows.Forms.TextBox();
+            this.txtIterations = new System.Windows.Forms.TextBox();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.txtPbkPassw = new System.Windows.Forms.TextBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.label33 = new System.Windows.Forms.Label();
+            this.txtSaltSize = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabConexão.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -180,6 +193,7 @@
             this.grpDHReceber.SuspendLayout();
             this.grpDHCalcularChave.SuspendLayout();
             this.grpDHGerar.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -189,6 +203,7 @@
             this.tabControl1.Controls.Add(this.tabMerkle);
             this.tabControl1.Controls.Add(this.tabTrustAgent);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -642,26 +657,26 @@
             this.grpMerkleMensagensRecebidas.Controls.Add(this.btnDecifrarMerkleMessage);
             this.grpMerkleMensagensRecebidas.Controls.Add(this.cbMerkleRecebidas);
             this.grpMerkleMensagensRecebidas.Enabled = false;
-            this.grpMerkleMensagensRecebidas.Location = new System.Drawing.Point(4, 321);
+            this.grpMerkleMensagensRecebidas.Location = new System.Drawing.Point(8, 344);
             this.grpMerkleMensagensRecebidas.Name = "grpMerkleMensagensRecebidas";
-            this.grpMerkleMensagensRecebidas.Size = new System.Drawing.Size(452, 165);
+            this.grpMerkleMensagensRecebidas.Size = new System.Drawing.Size(452, 147);
             this.grpMerkleMensagensRecebidas.TabIndex = 15;
             this.grpMerkleMensagensRecebidas.TabStop = false;
             this.grpMerkleMensagensRecebidas.Text = "Mensagens Recebidas";
             // 
             // txtMerkleMessage
             // 
-            this.txtMerkleMessage.Location = new System.Drawing.Point(125, 73);
+            this.txtMerkleMessage.Location = new System.Drawing.Point(125, 63);
             this.txtMerkleMessage.Multiline = true;
             this.txtMerkleMessage.Name = "txtMerkleMessage";
-            this.txtMerkleMessage.Size = new System.Drawing.Size(221, 82);
+            this.txtMerkleMessage.Size = new System.Drawing.Size(221, 48);
             this.txtMerkleMessage.TabIndex = 13;
             // 
             // label13
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(6, 73);
+            this.label13.Location = new System.Drawing.Point(6, 63);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(105, 48);
             this.label13.TabIndex = 14;
@@ -671,7 +686,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(6, 35);
+            this.label14.Location = new System.Drawing.Point(6, 25);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(105, 24);
             this.label14.TabIndex = 11;
@@ -679,7 +694,7 @@
             // 
             // btnDecifrarMerkleMessage
             // 
-            this.btnDecifrarMerkleMessage.Location = new System.Drawing.Point(362, 39);
+            this.btnDecifrarMerkleMessage.Location = new System.Drawing.Point(362, 29);
             this.btnDecifrarMerkleMessage.Name = "btnDecifrarMerkleMessage";
             this.btnDecifrarMerkleMessage.Size = new System.Drawing.Size(75, 23);
             this.btnDecifrarMerkleMessage.TabIndex = 12;
@@ -691,7 +706,7 @@
             // 
             this.cbMerkleRecebidas.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbMerkleRecebidas.FormattingEnabled = true;
-            this.cbMerkleRecebidas.Location = new System.Drawing.Point(125, 39);
+            this.cbMerkleRecebidas.Location = new System.Drawing.Point(125, 29);
             this.cbMerkleRecebidas.Name = "cbMerkleRecebidas";
             this.cbMerkleRecebidas.Size = new System.Drawing.Size(221, 21);
             this.cbMerkleRecebidas.TabIndex = 10;
@@ -706,7 +721,7 @@
             this.grpPuzzlesEnviar.Enabled = false;
             this.grpPuzzlesEnviar.Location = new System.Drawing.Point(4, 174);
             this.grpPuzzlesEnviar.Name = "grpPuzzlesEnviar";
-            this.grpPuzzlesEnviar.Size = new System.Drawing.Size(452, 141);
+            this.grpPuzzlesEnviar.Size = new System.Drawing.Size(452, 164);
             this.grpPuzzlesEnviar.TabIndex = 3;
             this.grpPuzzlesEnviar.TabStop = false;
             this.grpPuzzlesEnviar.Text = "Enviar Mensagem";
@@ -1473,6 +1488,127 @@
             this.label27.TabIndex = 12;
             this.label27.Text = "N";
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.label33);
+            this.tabPage1.Controls.Add(this.txtSaltSize);
+            this.tabPage1.Controls.Add(this.txtPbkCifra);
+            this.tabPage1.Controls.Add(this.btnPBKDF2);
+            this.tabPage1.Controls.Add(this.textBox7);
+            this.tabPage1.Controls.Add(this.label35);
+            this.tabPage1.Controls.Add(this.label34);
+            this.tabPage1.Controls.Add(this.txtSize);
+            this.tabPage1.Controls.Add(this.txtIterations);
+            this.tabPage1.Controls.Add(this.label32);
+            this.tabPage1.Controls.Add(this.label31);
+            this.tabPage1.Controls.Add(this.txtPbkPassw);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(956, 494);
+            this.tabPage1.TabIndex = 5;
+            this.tabPage1.Text = "PBKDF2";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // txtPbkCifra
+            // 
+            this.txtPbkCifra.Enabled = false;
+            this.txtPbkCifra.Location = new System.Drawing.Point(23, 303);
+            this.txtPbkCifra.Multiline = true;
+            this.txtPbkCifra.Name = "txtPbkCifra";
+            this.txtPbkCifra.Size = new System.Drawing.Size(573, 121);
+            this.txtPbkCifra.TabIndex = 25;
+            // 
+            // btnPBKDF2
+            // 
+            this.btnPBKDF2.Location = new System.Drawing.Point(237, 274);
+            this.btnPBKDF2.Name = "btnPBKDF2";
+            this.btnPBKDF2.Size = new System.Drawing.Size(75, 23);
+            this.btnPBKDF2.TabIndex = 24;
+            this.btnPBKDF2.Text = "Gerar";
+            this.btnPBKDF2.UseVisualStyleBackColor = true;
+            this.btnPBKDF2.Click += new System.EventHandler(this.btnPBKDF2_Click);
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(237, 64);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(359, 20);
+            this.textBox7.TabIndex = 23;
+            // 
+            // label35
+            // 
+            this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label35.Location = new System.Drawing.Point(19, 59);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(212, 23);
+            this.label35.TabIndex = 22;
+            this.label35.Text = "Tipo De Randomização";
+            this.label35.Click += new System.EventHandler(this.label35_Click);
+            // 
+            // label34
+            // 
+            this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label34.Location = new System.Drawing.Point(19, 215);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(97, 23);
+            this.label34.TabIndex = 20;
+            this.label34.Text = "Tamanho";
+            // 
+            // txtSize
+            // 
+            this.txtSize.Location = new System.Drawing.Point(237, 220);
+            this.txtSize.Name = "txtSize";
+            this.txtSize.Size = new System.Drawing.Size(359, 20);
+            this.txtSize.TabIndex = 21;
+            // 
+            // txtIterations
+            // 
+            this.txtIterations.Location = new System.Drawing.Point(237, 176);
+            this.txtIterations.Name = "txtIterations";
+            this.txtIterations.Size = new System.Drawing.Size(359, 20);
+            this.txtIterations.TabIndex = 19;
+            // 
+            // label32
+            // 
+            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label32.Location = new System.Drawing.Point(19, 171);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(97, 23);
+            this.label32.TabIndex = 16;
+            this.label32.Text = "Iterações";
+            // 
+            // label31
+            // 
+            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label31.Location = new System.Drawing.Point(19, 96);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(97, 23);
+            this.label31.TabIndex = 14;
+            this.label31.Text = "Password";
+            // 
+            // txtPbkPassw
+            // 
+            this.txtPbkPassw.Location = new System.Drawing.Point(237, 101);
+            this.txtPbkPassw.Name = "txtPbkPassw";
+            this.txtPbkPassw.Size = new System.Drawing.Size(359, 20);
+            this.txtPbkPassw.TabIndex = 15;
+            // 
+            // label33
+            // 
+            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label33.Location = new System.Drawing.Point(19, 135);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(212, 23);
+            this.label33.TabIndex = 26;
+            this.label33.Text = "Tamanho Do Sal";
+            // 
+            // txtSaltSize
+            // 
+            this.txtSaltSize.Location = new System.Drawing.Point(237, 140);
+            this.txtSaltSize.Name = "txtSaltSize";
+            this.txtSaltSize.Size = new System.Drawing.Size(359, 20);
+            this.txtSaltSize.TabIndex = 27;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1524,6 +1660,8 @@
             this.grpDHCalcularChave.PerformLayout();
             this.grpDHGerar.ResumeLayout(false);
             this.grpDHGerar.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1659,6 +1797,19 @@
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.TextBox txtDHMensagemEnv;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.TextBox txtSize;
+        private System.Windows.Forms.TextBox txtIterations;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.TextBox txtPbkPassw;
+        private System.Windows.Forms.TextBox txtPbkCifra;
+        private System.Windows.Forms.Button btnPBKDF2;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.TextBox txtSaltSize;
     }
 }
 

@@ -1,0 +1,8 @@
+C:\Users\batpe\Desktop\SiUi\PBKDF2Lib\bin\Debug\netstandard2.0\PBKDF2Lib.deps.json
+C:\Users\batpe\Desktop\SiUi\PBKDF2Lib\bin\Debug\netstandard2.0\PBKDF2Lib.dll
+C:\Users\batpe\Desktop\SiUi\PBKDF2Lib\bin\Debug\netstandard2.0\PBKDF2Lib.pdb
+C:\Users\batpe\Desktop\SiUi\PBKDF2Lib\obj\Debug\netstandard2.0\PBKDF2Lib.csproj.CoreCompileInputs.cache
+C:\Users\batpe\Desktop\SiUi\PBKDF2Lib\obj\Debug\netstandard2.0\PBKDF2Lib.AssemblyInfoInputs.cache
+C:\Users\batpe\Desktop\SiUi\PBKDF2Lib\obj\Debug\netstandard2.0\PBKDF2Lib.AssemblyInfo.cs
+C:\Users\batpe\Desktop\SiUi\PBKDF2Lib\obj\Debug\netstandard2.0\PBKDF2Lib.dll
+C:\Users\batpe\Desktop\SiUi\PBKDF2Lib\obj\Debug\netstandard2.0\PBKDF2Lib.pdb

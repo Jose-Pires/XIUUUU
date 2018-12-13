@@ -109,3 +109,5 @@ C:\Users\batpe\Desktop\SiUi\SiUi\bin\Debug\TAClientLib.dll
 C:\Users\batpe\Desktop\SiUi\SiUi\bin\Debug\TAClientLib.pdb
 C:\Users\batpe\Desktop\SiUi\SiUi\bin\Debug\DiffieHellmanLib.dll
 C:\Users\batpe\Desktop\SiUi\SiUi\bin\Debug\DiffieHellmanLib.pdb
+C:\Users\batpe\Desktop\SiUi\SiUi\bin\Debug\PBKDF2Lib.dll
+C:\Users\batpe\Desktop\SiUi\SiUi\bin\Debug\PBKDF2Lib.pdb

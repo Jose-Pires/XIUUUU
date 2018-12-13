@@ -97,6 +97,10 @@
       <Project>{d1af57b2-9094-4c10-beb3-8889052042ef}</Project>
       <Name>MerklePuzzlesLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PBKDF2Lib\PBKDF2Lib.csproj">
+      <Project>{903c4872-7295-40a2-a5f5-afe0f521b126}</Project>
+      <Name>PBKDF2Lib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PreSharedKeysLib\PreSharedKeysLib.csproj">
       <Project>{7f30f767-f4ba-428f-b6c4-a8296650e521}</Project>
       <Name>PreSharedKeysLib</Name>
