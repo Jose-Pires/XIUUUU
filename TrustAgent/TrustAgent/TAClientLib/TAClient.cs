@@ -1,4 +1,4 @@
-﻿/*
+/*
  * TAClientLib.TAClient.cs 
  * Developer: Pedro Cavaleiro
  * Developement stage: Completed
@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-
+using System.Security.Cryptography;
 using static TAClientLib.AESCipher;
 
 namespace TAClientLib
@@ -51,6 +51,18 @@ namespace TAClientLib
         public delegate void EntitiesListResponseHandler(List<(string, string)> e);
         public event KeyNegotiationHandler KeyReceived;
         public delegate void KeyNegotiationHandler(byte[] key, IPAddress remoteIP, int remotePORT);
+
+        public delegate void ExceptionHandler(string Message);
+        public event ExceptionHandler TimeMissmatch;
+        public event ExceptionHandler InvalidCommand;
+        public event ExceptionHandler ErrorConnecting;
+
+        public delegate void ClientRejectedExceptionHandler(ServerCommandEventArgs e);
+        public event ClientRejectedExceptionHandler EntityNotFound;
+        public event ClientRejectedExceptionHandler ClientRejected;
+
+        public delegate void SecurityExceptionHandler(ServerCommandEventArgs e, string originalHMAC = "", string computedHMAC = "");
+        public event SecurityExceptionHandler InvalidHMAC;
 
         internal Client client;
         internal Client spy;
@@ -115,11 +127,16 @@ namespace TAClientLib
         /// <param name="entity">Entity.</param>
         public void RequestKey(string entity, string waitingPort) {
 
-            byte[] randKey = GenKey(Helpers.GenerateSeed(), 10);
-            byte[] randIV = GenIV(Helpers.GenerateSeed(), 20);
-            byte[] encryptedKey = EncryptData(randKey, key, randIV);
+            //byte[] randKey = GenKey(Helpers.GenerateSeed(), 10);
+            //byte[] randIV = GenIV(Helpers.GenerateSeed(), 20);
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
+            aes.KeySize = 256;
+            aes.GenerateKey();
+            aes.GenerateIV();
 
-            string tmp_msg = string.Format("{0}|{1}|{2}|{3}", entity, waitingPort, Convert.ToBase64String(encryptedKey), Convert.ToBase64String(randIV));
+            byte[] encryptedKey = EncryptData(aes.Key, key, aes.IV);
+
+            string tmp_msg = string.Format("{0}|{1}|{2}|{3}", entity, waitingPort, Convert.ToBase64String(encryptedKey), Convert.ToBase64String(aes.IV));
 
             ClientMessage msg = new ClientMessage
             {
@@ -206,7 +223,7 @@ namespace TAClientLib
         /// <param name="e">E.</param>
         void Client_InvalidTime(ServerCommandEventArgs e)
         {
-            throw new Exception("An error ocurred while matching the packet time");
+            TimeMissmatch("An error ocurred while matching the packet time");
         }
 
         /// <summary>
@@ -215,7 +232,7 @@ namespace TAClientLib
         /// <param name="e">E.</param>
         void Client_EntityNotFound(ServerCommandEventArgs e)
         {
-            throw new ClientRejectedException("Entity no longer available");
+            EntityNotFound(e);
         }
 
         /// <summary>
@@ -224,7 +241,7 @@ namespace TAClientLib
         /// <param name="e">E.</param>
         void Client_InvalidComand(ServerCommandEventArgs e)
         {
-            throw new Exception("Invalid comand");
+            InvalidCommand("Command not recognized");
         }
 
         /// <summary>
@@ -249,7 +266,7 @@ namespace TAClientLib
         /// </exception>
         void Client_Rejected(ServerCommandEventArgs e)
         {
-            throw new ClientRejectedException(e.Message);
+            ClientRejected(e);
         }
 
         /// <summary>
@@ -260,7 +277,7 @@ namespace TAClientLib
         /// </exception>
         void Client_ConnectionFailed(ServerCommandEventArgs e)
         {
-            throw new ConnectionFailedException("Connection to the server failed");
+            ErrorConnecting("Connection to the server failed");
         }
 
         /// <summary>
@@ -269,7 +286,7 @@ namespace TAClientLib
         /// <param name="e">E.</param>
         void Client_InvalidHMAC(ServerCommandEventArgs e)
         {
-            throw new HMACFailedException("HMAC Validation failed", e.OriginalHMAC.FromByteArrayToHex(), e.ComputedHMAC.FromByteArrayToHex());
+            InvalidHMAC(e, e.OriginalHMAC.FromByteArrayToHex(), e.ComputedHMAC.FromByteArrayToHex());
         }
 
         #endregion
