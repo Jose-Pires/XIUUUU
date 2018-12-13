@@ -72,7 +72,7 @@
             this.lblMensagem = new System.Windows.Forms.Label();
             this.btnEnviar = new System.Windows.Forms.Button();
             this.tabMerkle = new System.Windows.Forms.TabPage();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.grpMerkleMensagensRecebidas = new System.Windows.Forms.GroupBox();
             this.txtMerkleMessage = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
@@ -108,37 +108,55 @@
             this.label5 = new System.Windows.Forms.Label();
             this.lvMyPuzzles = new System.Windows.Forms.ListView();
             this.tabTrustAgent = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.btnTaLigar = new System.Windows.Forms.Button();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.txtTaPort = new System.Windows.Forms.TextBox();
-            this.txtTaIp = new System.Windows.Forms.TextBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.txtTaKey = new System.Windows.Forms.TextBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label22 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.label20 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label22 = new System.Windows.Forms.Label();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.btnNegocios = new System.Windows.Forms.Button();
+            this.btnTaObterEnt = new System.Windows.Forms.Button();
+            this.lvTaEntidades = new System.Windows.Forms.ListView();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.txtTaKey = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.btnTaLigar = new System.Windows.Forms.Button();
+            this.label18 = new System.Windows.Forms.Label();
+            this.txtTaIp = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.txtTaPort = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.grpDHEnviar = new System.Windows.Forms.GroupBox();
+            this.cbDHEntidadeEnviar = new System.Windows.Forms.ComboBox();
+            this.btnDHMensEnv = new System.Windows.Forms.Button();
+            this.label29 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
+            this.txtDHMensagemEnv = new System.Windows.Forms.TextBox();
+            this.grpDHReceber = new System.Windows.Forms.GroupBox();
+            this.txtDhDeciferMessage = new System.Windows.Forms.TextBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.btDhDecifrarMessage = new System.Windows.Forms.Button();
+            this.cbDhReceived = new System.Windows.Forms.ComboBox();
+            this.grpDHCalcularChave = new System.Windows.Forms.GroupBox();
+            this.btnDHEstabelecer = new System.Windows.Forms.Button();
+            this.cbEntityDH = new System.Windows.Forms.ComboBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.txtDHX = new System.Windows.Forms.TextBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.grpDHGerar = new System.Windows.Forms.GroupBox();
             this.btnDHGerar = new System.Windows.Forms.Button();
             this.txtDHN = new System.Windows.Forms.TextBox();
             this.label26 = new System.Windows.Forms.Label();
             this.txtDHG = new System.Windows.Forms.TextBox();
             this.label27 = new System.Windows.Forms.Label();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.tabControl1.SuspendLayout();
             this.tabConexão.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -148,17 +166,20 @@
             this.groupBox4.SuspendLayout();
             this.grpRsaEnviar.SuspendLayout();
             this.tabMerkle.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.grpMerkleMensagensRecebidas.SuspendLayout();
             this.grpPuzzlesEnviar.SuspendLayout();
             this.grpEnviarPuzzles.SuspendLayout();
             this.grpObterPuzzles.SuspendLayout();
             this.grpGerarPuzzles.SuspendLayout();
             this.tabTrustAgent.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.groupBox8.SuspendLayout();
+            this.groupBox6.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.grpDHEnviar.SuspendLayout();
+            this.grpDHReceber.SuspendLayout();
+            this.grpDHCalcularChave.SuspendLayout();
+            this.grpDHGerar.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -601,7 +622,7 @@
             // 
             // tabMerkle
             // 
-            this.tabMerkle.Controls.Add(this.groupBox3);
+            this.tabMerkle.Controls.Add(this.grpMerkleMensagensRecebidas);
             this.tabMerkle.Controls.Add(this.grpPuzzlesEnviar);
             this.tabMerkle.Controls.Add(this.grpEnviarPuzzles);
             this.tabMerkle.Controls.Add(this.grpObterPuzzles);
@@ -613,19 +634,20 @@
             this.tabMerkle.Text = "Merkle";
             this.tabMerkle.UseVisualStyleBackColor = true;
             // 
-            // groupBox3
+            // grpMerkleMensagensRecebidas
             // 
-            this.groupBox3.Controls.Add(this.txtMerkleMessage);
-            this.groupBox3.Controls.Add(this.label13);
-            this.groupBox3.Controls.Add(this.label14);
-            this.groupBox3.Controls.Add(this.btnDecifrarMerkleMessage);
-            this.groupBox3.Controls.Add(this.cbMerkleRecebidas);
-            this.groupBox3.Location = new System.Drawing.Point(4, 321);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(452, 165);
-            this.groupBox3.TabIndex = 15;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Mensagens Recebidas";
+            this.grpMerkleMensagensRecebidas.Controls.Add(this.txtMerkleMessage);
+            this.grpMerkleMensagensRecebidas.Controls.Add(this.label13);
+            this.grpMerkleMensagensRecebidas.Controls.Add(this.label14);
+            this.grpMerkleMensagensRecebidas.Controls.Add(this.btnDecifrarMerkleMessage);
+            this.grpMerkleMensagensRecebidas.Controls.Add(this.cbMerkleRecebidas);
+            this.grpMerkleMensagensRecebidas.Enabled = false;
+            this.grpMerkleMensagensRecebidas.Location = new System.Drawing.Point(4, 321);
+            this.grpMerkleMensagensRecebidas.Name = "grpMerkleMensagensRecebidas";
+            this.grpMerkleMensagensRecebidas.Size = new System.Drawing.Size(452, 165);
+            this.grpMerkleMensagensRecebidas.TabIndex = 15;
+            this.grpMerkleMensagensRecebidas.TabStop = false;
+            this.grpMerkleMensagensRecebidas.Text = "Mensagens Recebidas";
             // 
             // txtMerkleMessage
             // 
@@ -980,149 +1002,6 @@
             this.tabTrustAgent.Text = "TrustAgent";
             this.tabTrustAgent.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.groupBox8);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(956, 494);
-            this.tabPage3.TabIndex = 4;
-            this.tabPage3.Text = "DiffieHellman";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // btnTaLigar
-            // 
-            this.btnTaLigar.Location = new System.Drawing.Point(147, 152);
-            this.btnTaLigar.Name = "btnTaLigar";
-            this.btnTaLigar.Size = new System.Drawing.Size(75, 23);
-            this.btnTaLigar.TabIndex = 17;
-            this.btnTaLigar.Text = "Conectar";
-            this.btnTaLigar.UseVisualStyleBackColor = true;
-            this.btnTaLigar.Click += new System.EventHandler(this.btnTaLigar_Click);
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(6, 33);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(68, 24);
-            this.label15.TabIndex = 15;
-            this.label15.Text = "Estado";
-            // 
-            // label17
-            // 
-            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label17.Location = new System.Drawing.Point(6, 66);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(71, 23);
-            this.label17.TabIndex = 12;
-            this.label17.Text = "IP ";
-            // 
-            // txtTaPort
-            // 
-            this.txtTaPort.Location = new System.Drawing.Point(146, 89);
-            this.txtTaPort.Name = "txtTaPort";
-            this.txtTaPort.Size = new System.Drawing.Size(76, 20);
-            this.txtTaPort.TabIndex = 13;
-            // 
-            // txtTaIp
-            // 
-            this.txtTaIp.Location = new System.Drawing.Point(147, 66);
-            this.txtTaIp.Name = "txtTaIp";
-            this.txtTaIp.Size = new System.Drawing.Size(275, 20);
-            this.txtTaIp.TabIndex = 14;
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(144, 40);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(79, 13);
-            this.label18.TabIndex = 16;
-            this.label18.Text = "Not Connected";
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.txtTaKey);
-            this.groupBox5.Controls.Add(this.label19);
-            this.groupBox5.Controls.Add(this.label15);
-            this.groupBox5.Controls.Add(this.btnTaLigar);
-            this.groupBox5.Controls.Add(this.label18);
-            this.groupBox5.Controls.Add(this.txtTaIp);
-            this.groupBox5.Controls.Add(this.label16);
-            this.groupBox5.Controls.Add(this.txtTaPort);
-            this.groupBox5.Controls.Add(this.label17);
-            this.groupBox5.Location = new System.Drawing.Point(9, 4);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(434, 199);
-            this.groupBox5.TabIndex = 18;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Ligar ao agente de confiança";
-            // 
-            // label16
-            // 
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(6, 89);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(71, 23);
-            this.label16.TabIndex = 11;
-            this.label16.Text = "Porta";
-            // 
-            // label19
-            // 
-            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.Location = new System.Drawing.Point(6, 112);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(71, 23);
-            this.label19.TabIndex = 18;
-            this.label19.Text = "Chave";
-            // 
-            // txtTaKey
-            // 
-            this.txtTaKey.Location = new System.Drawing.Point(146, 115);
-            this.txtTaKey.Name = "txtTaKey";
-            this.txtTaKey.Size = new System.Drawing.Size(275, 20);
-            this.txtTaKey.TabIndex = 19;
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.button3);
-            this.groupBox6.Controls.Add(this.button2);
-            this.groupBox6.Controls.Add(this.listView1);
-            this.groupBox6.Location = new System.Drawing.Point(450, 4);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(498, 199);
-            this.groupBox6.TabIndex = 19;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Entidades Ligadas";
-            // 
-            // listView1
-            // 
-            this.listView1.Location = new System.Drawing.Point(6, 18);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(486, 128);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 152);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(95, 23);
-            this.button2.TabIndex = 20;
-            this.button2.Text = "Obter Entidades";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(397, 152);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(95, 23);
-            this.button3.TabIndex = 21;
-            this.button3.Text = "Negociar Chave";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.textBox2);
@@ -1140,6 +1019,13 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Enviar Mensagem";
             // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(110, 94);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(320, 20);
+            this.textBox2.TabIndex = 21;
+            // 
             // comboBox1
             // 
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -1148,6 +1034,15 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(112, 21);
             this.comboBox1.TabIndex = 12;
+            // 
+            // label22
+            // 
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label22.Location = new System.Drawing.Point(3, 91);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(71, 23);
+            this.label22.TabIndex = 20;
+            this.label22.Text = "Chave";
             // 
             // button4
             // 
@@ -1185,39 +1080,357 @@
             this.textBox1.Size = new System.Drawing.Size(320, 20);
             this.textBox1.TabIndex = 10;
             // 
-            // textBox2
+            // groupBox6
             // 
-            this.textBox2.Location = new System.Drawing.Point(110, 94);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(320, 20);
-            this.textBox2.TabIndex = 21;
+            this.groupBox6.Controls.Add(this.btnNegocios);
+            this.groupBox6.Controls.Add(this.btnTaObterEnt);
+            this.groupBox6.Controls.Add(this.lvTaEntidades);
+            this.groupBox6.Location = new System.Drawing.Point(450, 4);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(498, 199);
+            this.groupBox6.TabIndex = 19;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Entidades Ligadas";
             // 
-            // label22
+            // btnNegocios
             // 
-            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label22.Location = new System.Drawing.Point(3, 91);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(71, 23);
-            this.label22.TabIndex = 20;
-            this.label22.Text = "Chave";
+            this.btnNegocios.Location = new System.Drawing.Point(397, 152);
+            this.btnNegocios.Name = "btnNegocios";
+            this.btnNegocios.Size = new System.Drawing.Size(95, 23);
+            this.btnNegocios.TabIndex = 21;
+            this.btnNegocios.Text = "Negociar Chave";
+            this.btnNegocios.UseVisualStyleBackColor = true;
+            this.btnNegocios.Click += new System.EventHandler(this.btnNegocios_Click);
             // 
-            // groupBox8
+            // btnTaObterEnt
             // 
-            this.groupBox8.Controls.Add(this.btnDHGerar);
-            this.groupBox8.Controls.Add(this.txtDHN);
-            this.groupBox8.Controls.Add(this.label26);
-            this.groupBox8.Controls.Add(this.txtDHG);
-            this.groupBox8.Controls.Add(this.label27);
-            this.groupBox8.Location = new System.Drawing.Point(8, 3);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(434, 199);
-            this.groupBox8.TabIndex = 19;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Ligar ao agente de confiança";
+            this.btnTaObterEnt.Location = new System.Drawing.Point(6, 152);
+            this.btnTaObterEnt.Name = "btnTaObterEnt";
+            this.btnTaObterEnt.Size = new System.Drawing.Size(95, 23);
+            this.btnTaObterEnt.TabIndex = 20;
+            this.btnTaObterEnt.Text = "Obter Entidades";
+            this.btnTaObterEnt.UseVisualStyleBackColor = true;
+            this.btnTaObterEnt.Click += new System.EventHandler(this.btnTaObterEnt_Click);
+            // 
+            // lvTaEntidades
+            // 
+            this.lvTaEntidades.Location = new System.Drawing.Point(6, 18);
+            this.lvTaEntidades.MultiSelect = false;
+            this.lvTaEntidades.Name = "lvTaEntidades";
+            this.lvTaEntidades.Size = new System.Drawing.Size(486, 128);
+            this.lvTaEntidades.TabIndex = 0;
+            this.lvTaEntidades.UseCompatibleStateImageBehavior = false;
+            this.lvTaEntidades.View = System.Windows.Forms.View.List;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.txtTaKey);
+            this.groupBox5.Controls.Add(this.label19);
+            this.groupBox5.Controls.Add(this.label15);
+            this.groupBox5.Controls.Add(this.btnTaLigar);
+            this.groupBox5.Controls.Add(this.label18);
+            this.groupBox5.Controls.Add(this.txtTaIp);
+            this.groupBox5.Controls.Add(this.label16);
+            this.groupBox5.Controls.Add(this.txtTaPort);
+            this.groupBox5.Controls.Add(this.label17);
+            this.groupBox5.Location = new System.Drawing.Point(9, 4);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(434, 199);
+            this.groupBox5.TabIndex = 18;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Ligar ao agente de confiança";
+            // 
+            // txtTaKey
+            // 
+            this.txtTaKey.Location = new System.Drawing.Point(146, 115);
+            this.txtTaKey.Name = "txtTaKey";
+            this.txtTaKey.Size = new System.Drawing.Size(275, 20);
+            this.txtTaKey.TabIndex = 19;
+            // 
+            // label19
+            // 
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(6, 112);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(71, 23);
+            this.label19.TabIndex = 18;
+            this.label19.Text = "Chave";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(6, 33);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(68, 24);
+            this.label15.TabIndex = 15;
+            this.label15.Text = "Estado";
+            // 
+            // btnTaLigar
+            // 
+            this.btnTaLigar.Location = new System.Drawing.Point(147, 152);
+            this.btnTaLigar.Name = "btnTaLigar";
+            this.btnTaLigar.Size = new System.Drawing.Size(75, 23);
+            this.btnTaLigar.TabIndex = 17;
+            this.btnTaLigar.Text = "Conectar";
+            this.btnTaLigar.UseVisualStyleBackColor = true;
+            this.btnTaLigar.Click += new System.EventHandler(this.btnTaLigar_Click);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(144, 40);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(79, 13);
+            this.label18.TabIndex = 16;
+            this.label18.Text = "Not Connected";
+            // 
+            // txtTaIp
+            // 
+            this.txtTaIp.Location = new System.Drawing.Point(147, 66);
+            this.txtTaIp.Name = "txtTaIp";
+            this.txtTaIp.Size = new System.Drawing.Size(275, 20);
+            this.txtTaIp.TabIndex = 14;
+            // 
+            // label16
+            // 
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(6, 89);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(71, 23);
+            this.label16.TabIndex = 11;
+            this.label16.Text = "Porta";
+            // 
+            // txtTaPort
+            // 
+            this.txtTaPort.Location = new System.Drawing.Point(146, 89);
+            this.txtTaPort.Name = "txtTaPort";
+            this.txtTaPort.Size = new System.Drawing.Size(76, 20);
+            this.txtTaPort.TabIndex = 13;
+            // 
+            // label17
+            // 
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.Location = new System.Drawing.Point(6, 66);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(71, 23);
+            this.label17.TabIndex = 12;
+            this.label17.Text = "IP ";
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.grpDHEnviar);
+            this.tabPage3.Controls.Add(this.grpDHReceber);
+            this.tabPage3.Controls.Add(this.grpDHCalcularChave);
+            this.tabPage3.Controls.Add(this.grpDHGerar);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(956, 494);
+            this.tabPage3.TabIndex = 4;
+            this.tabPage3.Text = "DiffieHellman";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // grpDHEnviar
+            // 
+            this.grpDHEnviar.Controls.Add(this.cbDHEntidadeEnviar);
+            this.grpDHEnviar.Controls.Add(this.btnDHMensEnv);
+            this.grpDHEnviar.Controls.Add(this.label29);
+            this.grpDHEnviar.Controls.Add(this.label30);
+            this.grpDHEnviar.Controls.Add(this.txtDHMensagemEnv);
+            this.grpDHEnviar.Enabled = false;
+            this.grpDHEnviar.Location = new System.Drawing.Point(8, 250);
+            this.grpDHEnviar.Name = "grpDHEnviar";
+            this.grpDHEnviar.Size = new System.Drawing.Size(434, 236);
+            this.grpDHEnviar.TabIndex = 22;
+            this.grpDHEnviar.TabStop = false;
+            this.grpDHEnviar.Text = "Enviar Mensagem";
+            // 
+            // cbDHEntidadeEnviar
+            // 
+            this.cbDHEntidadeEnviar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbDHEntidadeEnviar.FormattingEnabled = true;
+            this.cbDHEntidadeEnviar.Location = new System.Drawing.Point(110, 23);
+            this.cbDHEntidadeEnviar.Name = "cbDHEntidadeEnviar";
+            this.cbDHEntidadeEnviar.Size = new System.Drawing.Size(112, 21);
+            this.cbDHEntidadeEnviar.TabIndex = 12;
+            // 
+            // btnDHMensEnv
+            // 
+            this.btnDHMensEnv.Location = new System.Drawing.Point(110, 83);
+            this.btnDHMensEnv.Name = "btnDHMensEnv";
+            this.btnDHMensEnv.Size = new System.Drawing.Size(75, 23);
+            this.btnDHMensEnv.TabIndex = 10;
+            this.btnDHMensEnv.Text = "Enviar";
+            this.btnDHMensEnv.UseVisualStyleBackColor = true;
+            this.btnDHMensEnv.Click += new System.EventHandler(this.btnDHMensEnv_Click);
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label29.Location = new System.Drawing.Point(3, 23);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(85, 24);
+            this.label29.TabIndex = 11;
+            this.label29.Text = "Entidade";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label30.Location = new System.Drawing.Point(3, 57);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(105, 24);
+            this.label30.TabIndex = 10;
+            this.label30.Text = "Mensagem";
+            // 
+            // txtDHMensagemEnv
+            // 
+            this.txtDHMensagemEnv.Location = new System.Drawing.Point(110, 57);
+            this.txtDHMensagemEnv.Name = "txtDHMensagemEnv";
+            this.txtDHMensagemEnv.Size = new System.Drawing.Size(320, 20);
+            this.txtDHMensagemEnv.TabIndex = 10;
+            // 
+            // grpDHReceber
+            // 
+            this.grpDHReceber.Controls.Add(this.txtDhDeciferMessage);
+            this.grpDHReceber.Controls.Add(this.label25);
+            this.grpDHReceber.Controls.Add(this.label28);
+            this.grpDHReceber.Controls.Add(this.btDhDecifrarMessage);
+            this.grpDHReceber.Controls.Add(this.cbDhReceived);
+            this.grpDHReceber.Enabled = false;
+            this.grpDHReceber.Location = new System.Drawing.Point(449, 250);
+            this.grpDHReceber.Name = "grpDHReceber";
+            this.grpDHReceber.Size = new System.Drawing.Size(499, 236);
+            this.grpDHReceber.TabIndex = 21;
+            this.grpDHReceber.TabStop = false;
+            this.grpDHReceber.Text = "Mensagens Recebidas";
+            // 
+            // txtDhDeciferMessage
+            // 
+            this.txtDhDeciferMessage.Location = new System.Drawing.Point(125, 73);
+            this.txtDhDeciferMessage.Multiline = true;
+            this.txtDhDeciferMessage.Name = "txtDhDeciferMessage";
+            this.txtDhDeciferMessage.Size = new System.Drawing.Size(221, 82);
+            this.txtDhDeciferMessage.TabIndex = 13;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label25.Location = new System.Drawing.Point(6, 73);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(105, 48);
+            this.label25.TabIndex = 14;
+            this.label25.Text = "Mensagem\r\nDecifrada";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label28.Location = new System.Drawing.Point(6, 35);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(105, 24);
+            this.label28.TabIndex = 11;
+            this.label28.Text = "Mensagem";
+            // 
+            // btDhDecifrarMessage
+            // 
+            this.btDhDecifrarMessage.Location = new System.Drawing.Point(362, 39);
+            this.btDhDecifrarMessage.Name = "btDhDecifrarMessage";
+            this.btDhDecifrarMessage.Size = new System.Drawing.Size(75, 23);
+            this.btDhDecifrarMessage.TabIndex = 12;
+            this.btDhDecifrarMessage.Text = "Decifrar";
+            this.btDhDecifrarMessage.UseVisualStyleBackColor = true;
+            this.btDhDecifrarMessage.Click += new System.EventHandler(this.btDhDecifrarMessage_Click);
+            // 
+            // cbDhReceived
+            // 
+            this.cbDhReceived.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbDhReceived.FormattingEnabled = true;
+            this.cbDhReceived.Location = new System.Drawing.Point(125, 39);
+            this.cbDhReceived.Name = "cbDhReceived";
+            this.cbDhReceived.Size = new System.Drawing.Size(221, 21);
+            this.cbDhReceived.TabIndex = 10;
+            // 
+            // grpDHCalcularChave
+            // 
+            this.grpDHCalcularChave.Controls.Add(this.btnDHEstabelecer);
+            this.grpDHCalcularChave.Controls.Add(this.cbEntityDH);
+            this.grpDHCalcularChave.Controls.Add(this.label24);
+            this.grpDHCalcularChave.Controls.Add(this.txtDHX);
+            this.grpDHCalcularChave.Controls.Add(this.label23);
+            this.grpDHCalcularChave.Enabled = false;
+            this.grpDHCalcularChave.Location = new System.Drawing.Point(449, 3);
+            this.grpDHCalcularChave.Name = "grpDHCalcularChave";
+            this.grpDHCalcularChave.Size = new System.Drawing.Size(499, 230);
+            this.grpDHCalcularChave.TabIndex = 20;
+            this.grpDHCalcularChave.TabStop = false;
+            this.grpDHCalcularChave.Text = "Calcular Chave";
+            // 
+            // btnDHEstabelecer
+            // 
+            this.btnDHEstabelecer.Location = new System.Drawing.Point(10, 198);
+            this.btnDHEstabelecer.Name = "btnDHEstabelecer";
+            this.btnDHEstabelecer.Size = new System.Drawing.Size(75, 23);
+            this.btnDHEstabelecer.TabIndex = 18;
+            this.btnDHEstabelecer.Text = "Estabelecer ligação";
+            this.btnDHEstabelecer.UseVisualStyleBackColor = true;
+            this.btnDHEstabelecer.Click += new System.EventHandler(this.btnDHEstabelecer_Click);
+            // 
+            // cbEntityDH
+            // 
+            this.cbEntityDH.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbEntityDH.FormattingEnabled = true;
+            this.cbEntityDH.Location = new System.Drawing.Point(113, 33);
+            this.cbEntityDH.Name = "cbEntityDH";
+            this.cbEntityDH.Size = new System.Drawing.Size(112, 21);
+            this.cbEntityDH.TabIndex = 21;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label24.Location = new System.Drawing.Point(6, 33);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(85, 24);
+            this.label24.TabIndex = 20;
+            this.label24.Text = "Entidade";
+            // 
+            // txtDHX
+            // 
+            this.txtDHX.Location = new System.Drawing.Point(113, 65);
+            this.txtDHX.Name = "txtDHX";
+            this.txtDHX.Size = new System.Drawing.Size(386, 20);
+            this.txtDHX.TabIndex = 19;
+            // 
+            // label23
+            // 
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label23.Location = new System.Drawing.Point(12, 60);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(25, 23);
+            this.label23.TabIndex = 18;
+            this.label23.Text = "X";
+            // 
+            // grpDHGerar
+            // 
+            this.grpDHGerar.Controls.Add(this.btnDHGerar);
+            this.grpDHGerar.Controls.Add(this.txtDHN);
+            this.grpDHGerar.Controls.Add(this.label26);
+            this.grpDHGerar.Controls.Add(this.txtDHG);
+            this.grpDHGerar.Controls.Add(this.label27);
+            this.grpDHGerar.Enabled = false;
+            this.grpDHGerar.Location = new System.Drawing.Point(8, 3);
+            this.grpDHGerar.Name = "grpDHGerar";
+            this.grpDHGerar.Size = new System.Drawing.Size(434, 230);
+            this.grpDHGerar.TabIndex = 19;
+            this.grpDHGerar.TabStop = false;
+            this.grpDHGerar.Text = "Gerar Numero Primo e Gerador";
             // 
             // btnDHGerar
             // 
-            this.btnDHGerar.Location = new System.Drawing.Point(37, 151);
+            this.btnDHGerar.Location = new System.Drawing.Point(37, 201);
             this.btnDHGerar.Name = "btnDHGerar";
             this.btnDHGerar.Size = new System.Drawing.Size(75, 23);
             this.btnDHGerar.TabIndex = 17;
@@ -1228,16 +1441,16 @@
             // txtDHN
             // 
             this.txtDHN.Enabled = false;
-            this.txtDHN.Location = new System.Drawing.Point(37, 50);
+            this.txtDHN.Location = new System.Drawing.Point(37, 33);
             this.txtDHN.Multiline = true;
             this.txtDHN.Name = "txtDHN";
-            this.txtDHN.Size = new System.Drawing.Size(391, 51);
+            this.txtDHN.Size = new System.Drawing.Size(391, 121);
             this.txtDHN.TabIndex = 14;
             // 
             // label26
             // 
             this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.Location = new System.Drawing.Point(6, 110);
+            this.label26.Location = new System.Drawing.Point(6, 157);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(25, 23);
             this.label26.TabIndex = 11;
@@ -1246,7 +1459,7 @@
             // txtDHG
             // 
             this.txtDHG.Enabled = false;
-            this.txtDHG.Location = new System.Drawing.Point(37, 113);
+            this.txtDHG.Location = new System.Drawing.Point(37, 160);
             this.txtDHG.Name = "txtDHG";
             this.txtDHG.Size = new System.Drawing.Size(76, 20);
             this.txtDHG.TabIndex = 13;
@@ -1254,7 +1467,7 @@
             // label27
             // 
             this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label27.Location = new System.Drawing.Point(6, 50);
+            this.label27.Location = new System.Drawing.Point(6, 28);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(25, 23);
             this.label27.TabIndex = 12;
@@ -1286,8 +1499,8 @@
             this.grpRsaEnviar.ResumeLayout(false);
             this.grpRsaEnviar.PerformLayout();
             this.tabMerkle.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.grpMerkleMensagensRecebidas.ResumeLayout(false);
+            this.grpMerkleMensagensRecebidas.PerformLayout();
             this.grpPuzzlesEnviar.ResumeLayout(false);
             this.grpPuzzlesEnviar.PerformLayout();
             this.grpEnviarPuzzles.ResumeLayout(false);
@@ -1297,14 +1510,20 @@
             this.grpGerarPuzzles.ResumeLayout(false);
             this.grpGerarPuzzles.PerformLayout();
             this.tabTrustAgent.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox8.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.grpDHEnviar.ResumeLayout(false);
+            this.grpDHEnviar.PerformLayout();
+            this.grpDHReceber.ResumeLayout(false);
+            this.grpDHReceber.PerformLayout();
+            this.grpDHCalcularChave.ResumeLayout(false);
+            this.grpDHCalcularChave.PerformLayout();
+            this.grpDHGerar.ResumeLayout(false);
+            this.grpDHGerar.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1386,7 +1605,7 @@
         private System.Windows.Forms.TextBox txtPuzzleKeyDecifrada;
         private System.Windows.Forms.GroupBox grpPuzzlesEnviar;
         private System.Windows.Forms.Button btnPuzzleUsarChave;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox grpMerkleMensagensRecebidas;
         private System.Windows.Forms.TextBox txtMerkleMessage;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
@@ -1403,9 +1622,9 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.Button btnNegocios;
+        private System.Windows.Forms.Button btnTaObterEnt;
+        private System.Windows.Forms.ListView lvTaEntidades;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TextBox txtTaKey;
         private System.Windows.Forms.Label label19;
@@ -1416,12 +1635,30 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox txtTaPort;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.GroupBox grpDHGerar;
         private System.Windows.Forms.Button btnDHGerar;
         private System.Windows.Forms.TextBox txtDHN;
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.TextBox txtDHG;
         private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.GroupBox grpDHCalcularChave;
+        private System.Windows.Forms.Button btnDHEstabelecer;
+        private System.Windows.Forms.ComboBox cbEntityDH;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.TextBox txtDHX;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.GroupBox grpDHReceber;
+        private System.Windows.Forms.TextBox txtDhDeciferMessage;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.Button btDhDecifrarMessage;
+        private System.Windows.Forms.ComboBox cbDhReceived;
+        private System.Windows.Forms.GroupBox grpDHEnviar;
+        private System.Windows.Forms.ComboBox cbDHEntidadeEnviar;
+        private System.Windows.Forms.Button btnDHMensEnv;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.TextBox txtDHMensagemEnv;
     }
 }
 

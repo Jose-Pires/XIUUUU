@@ -10,6 +10,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
 using TAClientLib;
+using System.Numerics;
+using DiffieHellmanLib;
 
 namespace SiUi
 {
@@ -24,6 +26,7 @@ namespace SiUi
         Puzzles myPuzzle;
         List<byte[]> MerkleList = new List<byte[]>();
         TAClient taClient;
+        DiffieHellman myDiffie;
 
 
         public Form1()
@@ -36,7 +39,7 @@ namespace SiUi
         #region NewUser
         private void Networking_NewUser(string message)
         {
-            MessageBox.Show("new user");
+            MessageBox.Show("Estabelecida uma nova ligação","Conexão");
         }
         #endregion
 
@@ -54,6 +57,7 @@ namespace SiUi
             lvEntidades.Invoke((MethodInvoker)delegate { lvEntidades.Items.Add(entity); });
             cbEntidadeRsa.Invoke((MethodInvoker)delegate { cbEntidadeRsa.Items.Add(entity); });
             cbEntPuzzleEnvi.Invoke((MethodInvoker)delegate { cbEntPuzzleEnvi.Items.Add(entity); });
+            cbEntityDH.Invoke((MethodInvoker)delegate { cbEntityDH.Items.Add(entity); });
 
             byte[] Message = Client.BuildPacket(myRsa.PublicKey, type: 1);
             Networking.ClientInstances.FirstOrDefault(var => var.RemoteEntity == entity).ClientNetworking.SendRequest(Message);
@@ -91,12 +95,14 @@ namespace SiUi
                 case 4:
                     if (Encoding.ASCII.GetString(e.Data).Equals("A Enviar Puzzles"))
                     {
+                        MessageBox.Show("A Receber Puzzles de " + instance.Entity,"Merkle Puzzles");
                         lblPuzzlesEnviar.Invoke((MethodInvoker)delegate { lblPuzzlesEnviar.Text = "A Receber Puzzles"; });
-                        prgMerkleSync.Invoke((MethodInvoker)delegate { prgMerkleSync.Maximum = 256; prgMerkleSync.Value = 0;  });
+                        prgMerkleSync.Invoke((MethodInvoker)delegate { prgMerkleSync.Maximum = 256; prgMerkleSync.Value = 0; });
                     }
                     else
                     {
                         lblPuzzlesEnviar.Invoke((MethodInvoker)delegate { lblPuzzlesEnviar.Text = "Terminado"; });
+                        MessageBox.Show("Finalizada a receção dos Puzzles de " + instance.Entity, "Merkle Puzzles");
                         myPuzzle.Conexoes.Add(new Puzzles.PuzzlesConnection { Entity = instance.Entity, MensagemList = MerkleList });
                         cbEntPuzzleEnvi.Invoke((MethodInvoker)delegate { cbEntPuzzleEnvi.Items.Remove(instance.Entity); });
                         cbPuzzleDecifrar.Invoke((MethodInvoker)delegate { cbPuzzleDecifrar.Items.Add(instance.Entity); });
@@ -105,6 +111,7 @@ namespace SiUi
                     break;
                 case 5:
                     string puzzle = Encoding.ASCII.GetString(e.Data);
+                    MessageBox.Show("Entidade " + instance.Entity + " escolheu " + puzzle);
                     lvMyPuzzles.Invoke((MethodInvoker)delegate
                     {
                         myPuzzle.Conexoes.Add(new Puzzles.PuzzlesConnection
@@ -121,6 +128,66 @@ namespace SiUi
                     string decryptedMerkle = Encoding.UTF8.GetString(decriptedMessage);
                     cbMerkleRecebidas.Invoke((MethodInvoker)delegate { cbMerkleRecebidas.Items.Add(new ComboBoxItem { Text = (instance.Entity + " " + DateTime.Now.ToString()), Value = decryptedMerkle }); });
                     MessageBox.Show("Recebeu uma mensagem de " + instance.Entity + "\n Usando Merkle");
+                    break;
+                case 7:
+                    Random r = new Random();
+                    DiffieHellman.PacketHelper EntityDiffie = JsonConvert.DeserializeObject<DiffieHellman.PacketHelper>(Encoding.ASCII.GetString(e.Data));
+                    myDiffie = new DiffieHellman();
+                    myDiffie.ImportN(BigInteger.Parse(EntityDiffie.N), EntityDiffie.G, EntityDiffie.IV);
+                    myDiffie.GenerateA(r.Next(0, 1000000000));
+                    myDiffie.GenerateKey(BigInteger.Parse(EntityDiffie.A));
+                    myDiffie.Conected.Add(new DiffieHellman.Conections
+                    {
+                        btKey = myDiffie.btKey,
+                        Entity = instance.Entity,
+                        IV = myDiffie.IV,
+                        strKey = myDiffie.strKey
+                    });
+
+                    string entityaux = instance.Entity;
+                    DiffieHellman.PacketHelper packet = new DiffieHellman.PacketHelper
+                    {
+                        A = myDiffie.A.ToString(),
+                        G = myDiffie.G,
+                        N = myDiffie.N.ToString(),
+                        IV = myDiffie.IV
+                    };
+
+                    byte[] Messageaux = Client.BuildPacket(packet, type: 8);
+
+                    if (Networking.server.clientHandlers.Where(var => var.Key == entityaux).Count() > 0)
+                    {
+                        Networking.server.clientHandlers.FirstOrDefault(var => var.Key == entityaux).Value.SendMessage(Messageaux);
+                    }
+                    else if (Networking.ClientInstances.Where(var => var.RemoteEntity == entityaux).Count() > 0)
+                    {
+                        Networking.ClientInstances.FirstOrDefault(var => var.RemoteEntity == entityaux).ClientNetworking.SendRequest(Messageaux);
+                    }
+                    cbDHEntidadeEnviar.Invoke((MethodInvoker)delegate { cbDHEntidadeEnviar.Items.Add(instance.Entity); });
+
+                    break;
+                case 8:
+                    DiffieHellman.PacketHelper EntityDiffieAux = JsonConvert.DeserializeObject<DiffieHellman.PacketHelper>(Encoding.ASCII.GetString(e.Data));
+                    myDiffie.ImportN(BigInteger.Parse(EntityDiffieAux.N), EntityDiffieAux.G, EntityDiffieAux.IV);
+                    myDiffie.GenerateKey(BigInteger.Parse(EntityDiffieAux.A));
+
+                    myDiffie.Conected.Add(new DiffieHellman.Conections
+                    {
+                        btKey = myDiffie.btKey,
+                        Entity = instance.Entity,
+                        IV = myDiffie.IV,
+                        strKey = myDiffie.strKey
+                    });
+
+                    MessageBox.Show("Gerada Chave DiffieHellman com " + instance.Entity);
+                    cbDHEntidadeEnviar.Invoke((MethodInvoker)delegate { cbDHEntidadeEnviar.Items.Add(instance.Entity); });
+                    break;
+                case 9:
+                    byte[] DHEncryptedMessage = e.Data;
+                    DiffieHellman.Conections DhConection = myDiffie.Conected.Where(var => var.Entity.Equals(instance.Entity)).FirstOrDefault();
+                    byte[] DHDecryptedMessage = myDiffie.Decrypt(DHEncryptedMessage, DhConection.btKey, DhConection.IV);
+                    cbDhReceived.Invoke((MethodInvoker)delegate { cbDhReceived.Items.Add(new ComboBoxItem { Text = (instance.Entity + " " + DateTime.Now.ToString()), Value = Encoding.UTF8.GetString(DHDecryptedMessage) }); });
+                    MessageBox.Show("Recebeu uma mensagem de " + instance.Entity + "\n Usando DiffieHellman");
                     break;
             }
         }
@@ -146,12 +213,14 @@ namespace SiUi
                 case 4:
                     if (Encoding.ASCII.GetString(e.Data).Equals("A Enviar Puzzles"))
                     {
+                        MessageBox.Show("A Receber Puzzles de " + instance.RemoteEntity, "Merkle Puzzles");
                         lblPuzzlesEnviar.Invoke((MethodInvoker)delegate { lblPuzzlesEnviar.Text = "A Receber Puzzles"; });
                         prgMerkleSync.Invoke((MethodInvoker)delegate { prgMerkleSync.Maximum = 256; prgMerkleSync.Value = 0; });
                     }
                     else
                     {
                         lblPuzzlesEnviar.Invoke((MethodInvoker)delegate { lblPuzzlesEnviar.Text = "Terminado"; });
+                        MessageBox.Show("Finalizada a receção dos Puzzles de " + instance.RemoteEntity, "Merkle Puzzles");
                         myPuzzle.Conexoes.Add(new Puzzles.PuzzlesConnection { Entity = instance.RemoteEntity, MensagemList = MerkleList });
                         cbEntPuzzleEnvi.Invoke((MethodInvoker)delegate { cbEntPuzzleEnvi.Items.Remove(instance.RemoteEntity); });
                         cbPuzzleDecifrar.Invoke((MethodInvoker)delegate { cbPuzzleDecifrar.Items.Add(instance.RemoteEntity); });
@@ -159,6 +228,7 @@ namespace SiUi
                     break;
                 case 5:
                     string puzzle = Encoding.ASCII.GetString(e.Data);
+                    MessageBox.Show("Entidade " + instance.RemoteEntity + " escolheu " + puzzle);
                     lvMyPuzzles.Invoke((MethodInvoker)delegate
                     {
                         myPuzzle.Conexoes.Add(new Puzzles.PuzzlesConnection
@@ -175,6 +245,65 @@ namespace SiUi
                     string decryptedMerkle = Encoding.UTF8.GetString(decriptedMessage);
                     cbMerkleRecebidas.Invoke((MethodInvoker)delegate { cbMerkleRecebidas.Items.Add(new ComboBoxItem { Text = (instance.RemoteEntity + " " + DateTime.Now.ToString()), Value = decryptedMerkle }); });
                     MessageBox.Show("Recebeu uma mensagem de " + instance.RemoteEntity + "\n Usando Merkle");
+                    break;
+                case 7:
+                    Random r = new Random();
+                    DiffieHellman.PacketHelper EntityDiffie = JsonConvert.DeserializeObject<DiffieHellman.PacketHelper>(Encoding.ASCII.GetString(e.Data));
+                    myDiffie = new DiffieHellman();
+                    myDiffie.ImportN(BigInteger.Parse(EntityDiffie.N), EntityDiffie.G, EntityDiffie.IV);
+                    myDiffie.GenerateA(r.Next(0, 1000000000));
+                    myDiffie.GenerateKey(BigInteger.Parse(EntityDiffie.A));
+                    myDiffie.Conected.Add(new DiffieHellman.Conections
+                    {
+                        btKey = myDiffie.btKey,
+                        Entity = instance.RemoteEntity,
+                        IV = myDiffie.IV,
+                        strKey = myDiffie.strKey
+                    });
+
+                    string entity = instance.RemoteEntity;
+                    DiffieHellman.PacketHelper packet = new DiffieHellman.PacketHelper
+                    {
+                        A = myDiffie.A.ToString(),
+                        G = myDiffie.G,
+                        N = myDiffie.N.ToString(),
+                        IV = myDiffie.IV
+                    };
+
+                    byte[] Message = Client.BuildPacket(packet, type: 8);
+
+                    if (Networking.server.clientHandlers.Where(var => var.Key == entity).Count() > 0)
+                    {
+                        Networking.server.clientHandlers.FirstOrDefault(var => var.Key == entity).Value.SendMessage(Message);
+                    }
+                    else if (Networking.ClientInstances.Where(var => var.RemoteEntity == entity).Count() > 0)
+                    {
+                        Networking.ClientInstances.FirstOrDefault(var => var.RemoteEntity == entity).ClientNetworking.SendRequest(Message);
+                    }
+
+                    cbDHEntidadeEnviar.Invoke((MethodInvoker)delegate { cbDHEntidadeEnviar.Items.Add(instance.RemoteEntity); });
+                    break;
+                case 8:
+                    DiffieHellman.PacketHelper EntityDiffieAux = JsonConvert.DeserializeObject<DiffieHellman.PacketHelper>(Encoding.ASCII.GetString(e.Data));
+                    myDiffie.ImportN(BigInteger.Parse(EntityDiffieAux.N), EntityDiffieAux.G, EntityDiffieAux.IV);
+                    myDiffie.GenerateKey(BigInteger.Parse(EntityDiffieAux.A));
+
+                    myDiffie.Conected.Add(new DiffieHellman.Conections
+                    {
+                        btKey = myDiffie.btKey,
+                        Entity = instance.RemoteEntity,
+                        IV = myDiffie.IV,
+                        strKey = myDiffie.strKey
+                    });
+                    cbDHEntidadeEnviar.Invoke((MethodInvoker)delegate { cbDHEntidadeEnviar.Items.Add(instance.RemoteEntity); });
+                    MessageBox.Show("Gerada Chave DiffieHellman com " + instance.RemoteEntity);
+                    break;
+                case 9:
+                    byte[] DHEncryptedMessage = e.Data;
+                    DiffieHellman.Conections DhConection = myDiffie.Conected.Where(var => var.Entity.Equals(instance.RemoteEntity)).FirstOrDefault();
+                    byte [] DHDecryptedMessage = myDiffie.Decrypt(DHEncryptedMessage,DhConection.btKey,DhConection.IV);
+                    cbDhReceived.Invoke((MethodInvoker)delegate { cbDhReceived.Items.Add(new ComboBoxItem { Text = (instance.RemoteEntity + " " + DateTime.Now.ToString()), Value = Encoding.UTF8.GetString(DHDecryptedMessage) }); });
+                    MessageBox.Show("Recebeu uma mensagem de " + instance.RemoteEntity + "\n Usando DiffieHellman");
                     break;
 
             }
@@ -201,7 +330,7 @@ namespace SiUi
 
         private void btnIniciar_Click(object sender, EventArgs e)
         {
-            btnGerar_Click(null,null);
+            btnGerar_Click(null, null);
             Username = txtNome.Text;
 
             if (string.IsNullOrEmpty(txtPortUser.Text) || string.IsNullOrEmpty(Username))
@@ -234,6 +363,7 @@ namespace SiUi
                 grpRsaEnviar.Enabled = true;
                 grpRsaReceber.Enabled = true;
                 grpGerarPuzzles.Enabled = true;
+                grpDHGerar.Enabled = true;
                 txtNome.Enabled = false;
                 txtPortUser.Enabled = false;
                 btnIniciar.Enabled = false;
@@ -326,6 +456,8 @@ namespace SiUi
             grpEnviarPuzzles.Enabled = true;
             grpObterPuzzles.Enabled = true;
             grpPuzzlesEnviar.Enabled = true;
+            grpMerkleMensagensRecebidas.Enabled = true;
+            
         }
 
         private void btnPuzzleDecifrar_Click(object sender, EventArgs e)
@@ -481,6 +613,77 @@ namespace SiUi
         }
         #endregion
 
+        #region DiffieHellman
+
+        private void btnDHMensEnv_Click(object sender, EventArgs e)
+        {
+            string entity = cbDHEntidadeEnviar.SelectedItem.ToString();
+            byte[] message = Encoding.UTF8.GetBytes(txtDHMensagemEnv.Text);
+            DiffieHellman.Conections conection = myDiffie.Conected.Where(var => var.Entity.Equals(entity)).FirstOrDefault();
+            byte[] encryptedMessage = myDiffie.Encrypt(message, conection.btKey, conection.IV);
+
+            byte[] Message = Client.BuildPacket(encryptedMessage, type: 9);
+
+            if (Networking.server.clientHandlers.Where(var => var.Key == entity).Count() > 0)
+            {
+                Networking.server.clientHandlers.FirstOrDefault(var => var.Key == entity).Value.SendMessage(Message);
+            }
+            else if (Networking.ClientInstances.Where(var => var.RemoteEntity == entity).Count() > 0)
+            {
+                Networking.ClientInstances.FirstOrDefault(var => var.RemoteEntity == entity).ClientNetworking.SendRequest(Message);
+            }
+        }
+
+        private void btDhDecifrarMessage_Click(object sender, EventArgs e)
+        {
+            txtDhDeciferMessage.Text = "";
+            ComboBoxItem item = (ComboBoxItem)cbDhReceived.SelectedItem;
+            txtDhDeciferMessage.Text = item.Value;
+        }
+
+        private void btnDHGerar_Click(object sender, EventArgs e)
+        {
+            myDiffie = new DiffieHellman();
+            txtDHN.Text = myDiffie.N.ToString();
+            txtDHG.Text = myDiffie.G.ToString();
+
+            grpDHEnviar.Enabled = true;
+            grpDHReceber.Enabled = true;
+            grpDHCalcularChave.Enabled = true;
+        }
+
+        private void btnDHEstabelecer_Click(object sender, EventArgs e)
+        {
+            string entity = cbEntityDH.SelectedItem.ToString();
+            myDiffie.N = BigInteger.Parse(txtDHN.Text);
+            myDiffie.G = int.Parse(txtDHG.Text);
+            myDiffie.GenerateA(BigInteger.Parse(txtDHX.Text));
+
+            DiffieHellman.PacketHelper packet = new DiffieHellman.PacketHelper
+            {
+                A = myDiffie.A.ToString(),
+                G = myDiffie.G,
+                N = myDiffie.N.ToString(),
+                IV = myDiffie.IV
+            };
+
+            byte[] Message = Client.BuildPacket(packet, type: 7);
+
+            if (Networking.server.clientHandlers.Where(var => var.Key == entity).Count() > 0)
+            {
+                Networking.server.clientHandlers.FirstOrDefault(var => var.Key == entity).Value.SendMessage(Message);
+            }
+            else if (Networking.ClientInstances.Where(var => var.RemoteEntity == entity).Count() > 0)
+            {
+                Networking.ClientInstances.FirstOrDefault(var => var.RemoteEntity == entity).ClientNetworking.SendRequest(Message);
+            }
+
+
+        }
+
+
+        #endregion
+
         #region HelpButtons
         private void btnHelpInicialização_Click(object sender, EventArgs e)
         {
@@ -517,23 +720,30 @@ namespace SiUi
             try
             {
                 taClient = new TAClient(Username, txtTaKey.Text);
+
+                taClient.EntityListReceived += TaClient_EntityListReceived;
+                taClient.Disconnected += TaClient_Disconnected;
+                taClient.KeyReceived += TaClient_KeyReceived;
+                taClient.TimeMissmatch += TaClient_TimeMissmatch;
+                taClient.InvalidCommand += TaClient_InvalidCommand;
+                taClient.ErrorConnecting += TaClient_ErrorConnecting; //:D
+                taClient.EntityNotFound += TaClient_EntityNotFound;
+                taClient.ClientRejected += TaClient_ClientRejected;
+                taClient.InvalidHMAC += TaClient_InvalidHMAC;
                 taClient.Connected += TaClient_Connected;
                 taClient.Kicked += TaClient_Kicked;
-                taClient.Disconnected += TaClient_Disconnected;
-                taClient.EntityListReceived += TaClient_EntityListReceived;
-                taClient.KeyReceived += TaClient_KeyReceived;
                 taClient.AttemptConnect(txtTaIp.Text, int.Parse(txtTaPort.Text));
 
             }
-            catch(InvalidKeyException ex)
+            catch (InvalidKeyException ex)
             {
                 MessageBox.Show(ex.Message);
             }
-            catch(ClientRejectedException ex)
+            catch (ClientRejectedException ex)
             {
-                
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Ocorreu um erro :/ ");
             }
@@ -548,12 +758,14 @@ namespace SiUi
 
         private void TaClient_EntityListReceived(List<(string, string)> e)
         {
-            throw new NotImplementedException();
+            foreach (var entity in e) {
+                lvTaEntidades.Invoke((MethodInvoker)delegate { lvTaEntidades.Items.Add(entity.Item1 + " " + entity.Item2); });
+            }
         }
 
         private void TaClient_Disconnected()
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Agente de Confiança não é de confiança para se manter online por isso está offline");
         }
 
         private void TaClient_Kicked()
@@ -563,13 +775,55 @@ namespace SiUi
 
         private void TaClient_Connected()
         {
+            MessageBox.Show("Ligação bem sucedida");
+        }
+
+        private void TaClient_InvalidHMAC(ServerCommandEventArgs e, string originalHMAC = "", string computedHMAC = "")
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TaClient_ClientRejected(ServerCommandEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TaClient_EntityNotFound(ServerCommandEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TaClient_ErrorConnecting(string Message)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TaClient_InvalidCommand(string Message)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TaClient_TimeMissmatch(string Message)
+        {
             throw new NotImplementedException();
         }
         #endregion
 
-        private void btnDHGerar_Click(object sender, EventArgs e)
-        {
+        
 
+        private void btnTaObterEnt_Click(object sender, EventArgs e)
+        {
+            taClient.RequestConnectedEntities();
         }
+
+        private void btnNegocios_Click(object sender, EventArgs e)
+        {
+            foreach ( var item in lvTaEntidades.SelectedItems)
+            {
+                taClient.RequestKey(item.ToString(),PortUser.ToString());
+            }
+        }
+
+        
     }
 }

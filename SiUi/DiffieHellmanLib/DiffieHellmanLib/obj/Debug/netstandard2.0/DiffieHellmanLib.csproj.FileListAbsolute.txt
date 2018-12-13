@@ -6,3 +6,4 @@ C:\Users\batpe\Desktop\SiUi\DiffieHellmanLib\DiffieHellmanLib\obj\Debug\netstand
 C:\Users\batpe\Desktop\SiUi\DiffieHellmanLib\DiffieHellmanLib\obj\Debug\netstandard2.0\DiffieHellmanLib.AssemblyInfo.cs
 C:\Users\batpe\Desktop\SiUi\DiffieHellmanLib\DiffieHellmanLib\obj\Debug\netstandard2.0\DiffieHellmanLib.dll
 C:\Users\batpe\Desktop\SiUi\DiffieHellmanLib\DiffieHellmanLib\obj\Debug\netstandard2.0\DiffieHellmanLib.pdb
+C:\Users\batpe\Desktop\SiUi\DiffieHellmanLib\DiffieHellmanLib\obj\Debug\netstandard2.0\DiffieHellmanLib.csprojAssemblyReference.cache

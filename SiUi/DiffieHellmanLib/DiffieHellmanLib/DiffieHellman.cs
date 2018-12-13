@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DiffieHellmanLib
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -22,9 +22,7 @@ namespace DiffieHellmanLib
             diffie.GenerateKey(diffie2.A);
             diffie2.GenerateKey(diffie.A);
 
-            byte[] encrypted = diffie.Encrypt(Encoding.UTF8.GetBytes("Hello World"));
-            Console.Write(Encoding.UTF8.GetString(diffie2.Decrypt(encrypted)));
-            Console.Write(Encoding.UTF8.GetString(diffie.Decrypt(encrypted)));
+            
 
 
             Console.Write("hey");
@@ -40,6 +38,21 @@ public class DiffieHellman
         public BigInteger Prime { get; set; }
         public int Generator { get; set; }
     }
+    public class PacketHelper
+    {
+        public string A { get; set; }
+        public string N { get; set; }
+        public int G { get; set; }
+        public byte[] IV { get; set; }
+    }
+
+    public class Conections
+    {
+        public string Entity { get; set; }
+        public byte[] IV { get; set; }
+        public string strKey { get; set; }
+        public byte[] btKey { get; set; }
+    }
     //  A = g ^ X mod N
     //  B = g ^ Y mod N
     //  key = B ^X mod N
@@ -50,11 +63,12 @@ public class DiffieHellman
     public BigInteger Y { get; set; }
     public BigInteger Key { get; set; }
     public string strKey { get; set; }
-    byte[] btKey { get; set; }
+    public byte[] btKey { get; set; }
     public byte[] IV { get; set; }
     public int G { get; set; }
     public BigInteger N { get; set; }
     List<Primes> Combinations = new List<Primes>();
+    public List<Conections> Conected = new List<Conections>();
 
 
     public DiffieHellman()
@@ -108,7 +122,7 @@ public class DiffieHellman
     /// <param name="Sender"></param>
     /// <param name="Receiver"></param>
     /// <returns byte[]></returns>
-    public byte[] Encrypt(byte[] Message)
+    public byte[] Encrypt(byte[] Message,byte[] btKey,byte[] IV)
     {
         byte[] encryptedBytes = null;
         using (MemoryStream ms = new MemoryStream())
@@ -128,7 +142,7 @@ public class DiffieHellman
         return encryptedBytes;
     }
 
-    public byte[] Decrypt(byte[] Message)
+    public byte[] Decrypt(byte[] Message,byte[] btKey,byte[] IV)
     {
         byte[] encryptedBytes = null;
         using (MemoryStream ms = new MemoryStream())
