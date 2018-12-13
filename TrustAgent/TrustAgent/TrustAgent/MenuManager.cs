@@ -162,7 +162,7 @@ namespace TrustAgent
                     case KeysCommand.Del:
                         MenuEventArgs delArgs = ProcessCommandArgs(Menu.Keys, KeysCommand.Del, cmd);
                         string delEntity = (string)delArgs.Arguments.First(m => m.Key.Equals(KeysArg.Entity)).Value;
-                        Keys.AddAction(Keys.Action.Add, delEntity, "");
+                        Keys.AddAction(Keys.Action.Del, delEntity, "");
                         break;
                     case KeysCommand.Discard: Keys.Discard(); break;
                     case KeysCommand.Exit: return true;
