@@ -15,7 +15,7 @@ using System.Security.Cryptography;
  * (2*) - > https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.rfc2898derivebytes?view=netframework-4.7.2
 */
 
-namespace PBKDF2
+namespace PBKDF2Lib
 {
     class PBKDF2
     {
