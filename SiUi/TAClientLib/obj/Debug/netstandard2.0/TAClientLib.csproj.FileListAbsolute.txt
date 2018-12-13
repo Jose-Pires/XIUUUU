@@ -1,0 +1,9 @@
+C:\Users\batpe\Desktop\SiUi\TAClientLib\bin\Debug\netstandard2.0\TAClientLib.deps.json
+C:\Users\batpe\Desktop\SiUi\TAClientLib\bin\Debug\netstandard2.0\TAClientLib.dll
+C:\Users\batpe\Desktop\SiUi\TAClientLib\bin\Debug\netstandard2.0\TAClientLib.pdb
+C:\Users\batpe\Desktop\SiUi\TAClientLib\obj\Debug\netstandard2.0\TAClientLib.csprojAssemblyReference.cache
+C:\Users\batpe\Desktop\SiUi\TAClientLib\obj\Debug\netstandard2.0\TAClientLib.csproj.CoreCompileInputs.cache
+C:\Users\batpe\Desktop\SiUi\TAClientLib\obj\Debug\netstandard2.0\TAClientLib.AssemblyInfoInputs.cache
+C:\Users\batpe\Desktop\SiUi\TAClientLib\obj\Debug\netstandard2.0\TAClientLib.AssemblyInfo.cs
+C:\Users\batpe\Desktop\SiUi\TAClientLib\obj\Debug\netstandard2.0\TAClientLib.dll
+C:\Users\batpe\Desktop\SiUi\TAClientLib\obj\Debug\netstandard2.0\TAClientLib.pdb
